@@ -1,0 +1,16 @@
+{
+  "name": "yin-radio-app",
+  "version": "1.0.0",
+  "description": "Minimal internet radio web application",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["radio", "internet-radio", "streaming"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yin Radio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js"></script>
+  <style>
+    [x-cloak] { display: none !important; }
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      background: transparent;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-runnable-track {
+      background: #374151;
+      height: 4px;
+      border-radius: 2px;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      background: #10b981;
+      height: 14px;
+      width: 14px;
+      border-radius: 50%;
+      margin-top: -5px;
+    }
+    input[type="range"]::-moz-range-track {
+      background: #374151;
+      height: 4px;
+      border-radius: 2px;
+    }
+    input[type="range"]::-moz-range-thumb {
+      background: #10b981;
+      height: 14px;
+      width: 14px;
+      border-radius: 50%;
+      border: none;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .animate-spin {
+      animation: spin 1s linear infinite;
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+  <div x-data="radioApp()" x-init="init()" x-cloak>
+
+    <!-- Player Bar -->
+    <header class="sticky top-0 z-50 bg-gray-800 border-b border-gray-700 shadow-lg">
+      <div class="max-w-3xl mx-auto px-4 py-3">
+        <div class="flex items-center gap-4">
+          <!-- Play/Pause -->
+          <button
+            @click="togglePlay()"
+            class="flex-shrink-0 w-12 h-12 bg-emerald-500 hover:bg-emerald-400 rounded-full flex items-center justify-center transition-colors"
+            :disabled="!currentStation"
+            :class="{ 'opacity-50 cursor-not-allowed': !currentStation }"
+          >
+            <svg x-show="!isPlaying" class="w-6 h-6 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+            <svg x-show="isPlaying" class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+            </svg>
+          </button>
+
+          <!-- Now Playing Info -->
+          <div class="flex-1 min-w-0">
+            <div x-show="currentStation" class="flex items-center gap-3">
+              <img
+                :src="currentStation?.favicon || ''"
+                class="w-8 h-8 rounded object-cover flex-shrink-0 bg-gray-700"
+                onerror="this.style.display='none'"
+                alt=""
+              >
+              <div class="min-w-0">
+                <p class="font-semibold truncate" x-text="currentStation?.name || 'Select a station'"></p>
+                <p class="text-xs text-gray-400 truncate">
+                  <span x-text="currentStation?.country || ''"></span>
+                  <span x-show="currentStation?.language"> • <span x-text="currentStation?.language?.split(',')[0]"></span></span>
+                  <span x-show="currentStation?.bitrate"> • <span x-text="currentStation?.bitrate"></span> kbps</span>
+                  <span x-show="currentStation?.codec"> • <span x-text="currentStation?.codec"></span></span>
+                </p>
+              </div>
+            </div>
+            <p x-show="!currentStation" class="text-gray-400">Select a station to play</p>
+          </div>
+
+          <!-- Volume -->
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+            </svg>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              x-model="volume"
+              @input="setVolume($event.target.value)"
+              class="w-20"
+            >
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Filters -->
+    <section x-show="dataLoaded" class="max-w-3xl mx-auto px-4 py-4">
+      <div class="space-y-3">
+        <!-- Search Row -->
+        <div class="flex gap-2">
+          <div class="flex-1 relative">
+            <input
+              type="text"
+              x-model="searchQuery"
+              @input.debounce.300ms="fetchFilterCounts(); fetchStations(true)"
+              placeholder="Search stations..."
+              class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-colors"
+            >
+            <svg class="w-5 h-5 text-gray-500 absolute right-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </div>
+          <button
+            @click="clearFilters()"
+            x-show="searchQuery || selectedCountry || selectedLanguage || selectedTag"
+            class="px-4 py-2.5 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm transition-colors"
+          >
+            Clear
+          </button>
+        </div>
+
+        <!-- Filter Row -->
+        <div class="flex gap-2">
+          <select
+            x-model="selectedCountry"
+            @change="fetchFilterCounts(); fetchStations(true)"
+            class="flex-1 min-w-0 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+          >
+            <option value="">All Countries</option>
+            <template x-for="country in countries" :key="country.code">
+              <option :value="country.code" x-text="country.name + ' (' + country.stationcount + ')'"></option>
+            </template>
+          </select>
+
+          <select
+            x-model="selectedLanguage"
+            @change="fetchFilterCounts(); fetchStations(true)"
+            class="flex-1 min-w-0 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+          >
+            <option value="">All Languages</option>
+            <template x-for="lang in languages" :key="lang.name">
+              <option :value="lang.name" x-text="lang.name + ' (' + lang.stationcount + ')'"></option>
+            </template>
+          </select>
+
+          <select
+            x-model="selectedTag"
+            @change="fetchFilterCounts(); fetchStations(true)"
+            class="flex-1 min-w-0 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+          >
+            <option value="">All Genres</option>
+            <template x-for="tag in tags" :key="tag.name">
+              <option :value="tag.name" x-text="tag.name + ' (' + tag.stationcount + ')'"></option>
+            </template>
+          </select>
+        </div>
+
+        <!-- Station Count -->
+        <div class="text-xs text-gray-500">
+          <span x-text="allStations.length.toLocaleString() + ' stations available'"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Initial Data Loading -->
+    <div x-show="dataLoading" class="flex flex-col items-center justify-center py-20">
+      <svg class="animate-spin w-10 h-10 text-emerald-500 mb-4" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <p class="text-gray-400 text-lg">Loading stations...</p>
+      <p class="text-gray-500 text-sm mt-1">Fetching station data</p>
+    </div>
+
+    <!-- Station List -->
+    <main x-show="dataLoaded" class="max-w-3xl mx-auto px-4 pb-8">
+      <!-- Error Banner -->
+      <div
+        x-show="errorMessage"
+        x-transition
+        class="mb-4 bg-red-900/50 border border-red-700 rounded-lg p-4 flex items-center justify-between gap-4"
+      >
+        <div class="flex items-center gap-3 min-w-0">
+          <svg class="w-5 h-5 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <p class="text-red-200 text-sm" x-text="errorMessage"></p>
+        </div>
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <button
+            @click="clearError(); loadStations();"
+            class="px-3 py-1.5 bg-red-700 hover:bg-red-600 rounded text-sm text-white transition-colors"
+          >
+            Retry
+          </button>
+          <button
+            @click="clearError()"
+            class="px-3 py-1.5 text-red-300 hover:text-white text-sm transition-colors"
+          >
+            Dismiss
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div x-show="isLoading" class="space-y-3">
+        <template x-for="i in 5" :key="i">
+          <div class="bg-gray-800 rounded-lg p-4 animate-pulse">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-gray-700 rounded-lg flex-shrink-0"></div>
+              <div class="flex-1 space-y-2">
+                <div class="h-4 bg-gray-700 rounded w-3/4"></div>
+                <div class="h-3 bg-gray-700 rounded w-1/2"></div>
+              </div>
+              <div class="w-10 h-10 bg-gray-700 rounded-full flex-shrink-0"></div>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- Empty State -->
+      <div x-show="!isLoading && stations.length === 0" class="text-center py-12">
+        <svg class="w-16 h-16 text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+        </svg>
+        <p class="text-gray-400 text-lg">No stations found</p>
+        <p class="text-gray-500 text-sm mt-1">Try adjusting your search or filters</p>
+      </div>
+
+      <!-- Stations -->
+      <div x-show="!isLoading && stations.length > 0" class="space-y-2">
+        <template x-for="station in stations" :key="station.stationuuid">
+          <div
+            @click="playStation(station)"
+            class="bg-gray-800 hover:bg-gray-700 rounded-lg p-3 cursor-pointer transition-colors group"
+            :class="{ 'border-l-4 border-emerald-400': currentStation?.stationuuid === station.stationuuid }"
+          >
+            <div class="flex items-center gap-3">
+              <!-- Favicon -->
+              <div class="w-12 h-12 bg-gray-700 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+                <img
+                  :src="station.favicon"
+                  class="w-full h-full object-cover"
+                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                  alt=""
+                >
+                <svg class="w-6 h-6 text-gray-500 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+                </svg>
+              </div>
+
+              <!-- Info -->
+              <div class="flex-1 min-w-0">
+                <p class="font-semibold truncate" x-text="station.name"></p>
+                <div class="flex items-center gap-2 text-xs text-gray-400 mt-0.5">
+                  <span x-text="station.country"></span>
+                  <span x-show="station.tags.length > 0"> • </span>
+                  <span class="truncate max-w-[200px]" x-text="station.tags.slice(0, 3).join(', ')"></span>
+                </div>
+              </div>
+
+              <!-- Meta -->
+              <div class="flex items-center gap-3 flex-shrink-0">
+                <span x-show="station.bitrate" class="text-xs bg-gray-700 px-2 py-1 rounded" x-text="station.bitrate + ' kbps'"></span>
+
+                <!-- Info Button -->
+                <button
+                  @click.stop="showStationInfo(station)"
+                  class="w-8 h-8 rounded-full flex items-center justify-center bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-white transition-colors"
+                  title="Station info"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                  </svg>
+                </button>
+
+                <!-- Play Indicator -->
+                <div
+                  class="w-10 h-10 rounded-full flex items-center justify-center transition-colors"
+                  :class="currentStation?.stationuuid === station.stationuuid && isPlaying ? 'bg-emerald-500' : 'bg-gray-700 group-hover:bg-gray-600'"
+                >
+                  <svg x-show="!(currentStation?.stationuuid === station.stationuuid && isPlaying)" class="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                  <svg x-show="currentStation?.stationuuid === station.stationuuid && isPlaying" class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- Loading More -->
+      <div x-show="isLoadingMore" class="py-6 flex items-center justify-center gap-3 text-gray-500">
+        <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span class="text-sm">Loading more stations...</span>
+      </div>
+
+      <!-- No More Results -->
+      <div x-show="!isLoading && !isLoadingMore && stations.length > 0 && !hasMore" class="py-6 text-center text-gray-500 text-sm">
+        No more stations
+      </div>
+    </main>
+
+    <!-- Station Info Modal -->
+    <div
+      x-show="selectedStationInfo"
+      x-transition.opacity.duration.200ms
+      class="fixed inset-0 z-[60] bg-black/70 flex items-center justify-center p-4"
+      @click="closeStationInfo()"
+    >
+      <div
+        x-show="selectedStationInfo"
+        x-transition.scale.duration.200ms
+        @click.stop
+        class="bg-gray-800 border border-gray-700 rounded-xl shadow-2xl max-w-md w-full p-6 space-y-4"
+      >
+        <!-- Header -->
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex items-center gap-3 min-w-0">
+            <img
+              :src="selectedStationInfo?.favicon || ''"
+              class="w-10 h-10 rounded object-cover flex-shrink-0 bg-gray-700"
+              onerror="this.style.display='none'"
+              alt=""
+            >
+            <h2 class="text-lg font-semibold text-white truncate" x-text="selectedStationInfo?.name || 'Station Info'"></h2>
+          </div>
+          <button
+            @click="closeStationInfo()"
+            class="flex-shrink-0 text-gray-400 hover:text-white transition-colors"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Details -->
+        <div class="space-y-3 text-sm">
+          <div class="flex justify-between border-b border-gray-700 pb-2">
+            <span class="text-gray-400">Country</span>
+            <span class="text-white" x-text="selectedStationInfo?.country || '—'"></span>
+          </div>
+          <div class="flex justify-between border-b border-gray-700 pb-2">
+            <span class="text-gray-400">Languages</span>
+            <span class="text-white text-right" x-text="selectedStationInfo?.language || 'Not specified'"></span>
+          </div>
+          <div class="flex justify-between border-b border-gray-700 pb-2">
+            <span class="text-gray-400">Language Codes</span>
+            <span class="text-white text-right" x-text="selectedStationInfo?.languagecodes || 'Not specified'"></span>
+          </div>
+          <div class="flex justify-between border-b border-gray-700 pb-2">
+            <span class="text-gray-400">HLS Stream</span>
+            <span class="text-white" x-text="selectedStationInfo?.hls === 1 ? 'Yes' : 'No'"></span>
+          </div>
+          <div class="flex justify-between border-b border-gray-700 pb-2">
+            <span class="text-gray-400">Geo Coordinates</span>
+            <span class="text-white text-right">
+              <span x-show="selectedStationInfo?.geo_lat != null && selectedStationInfo?.geo_long != null">
+                <span x-text="selectedStationInfo?.geo_lat?.toFixed(4) + ', ' + selectedStationInfo?.geo_long?.toFixed(4)"></span>
+              </span>
+              <span x-show="selectedStationInfo?.geo_lat == null || selectedStationInfo?.geo_long == null">Not available</span>
+            </span>
+          </div>
+          <div class="flex justify-between border-b border-gray-700 pb-2">
+            <span class="text-gray-400">Bitrate</span>
+            <span class="text-white" x-text="(selectedStationInfo?.bitrate || '—') + ' kbps'"></span>
+          </div>
+          <div class="flex justify-between border-b border-gray-700 pb-2">
+            <span class="text-gray-400">Codec</span>
+            <span class="text-white" x-text="selectedStationInfo?.codec || '—'"></span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-400">Votes</span>
+            <span class="text-white" x-text="selectedStationInfo?.votes ?? '—'"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>
