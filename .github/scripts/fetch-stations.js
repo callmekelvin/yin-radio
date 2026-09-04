@@ -1,5 +1,9 @@
 /**
- * Fetch all radio stations from Radio Browser API and save to public/stations.json
+ * Fetch all radio stations from Radio Browser API and save to radio-stations/.
+ * Writes:
+ *   - radio-stations/stations.json          (all stations, backward compatible)
+ *   - radio-stations/index.json             (manifest)
+ *   - radio-stations/{page}/stations.json   (paginated shards, 10k per page)
  * This script is intended to be run by GitHub Actions.
  */
 
@@ -17,13 +21,14 @@ const RADIO_BROWSER_SERVERS = [
 
 const API_TIMEOUT_MS = 8000;
 const API_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36';
+const PAGE_SIZE = 10000;
 
-async function fetchFromRadioBrowser(path, options = {}) {
+async function fetchFromRadioBrowser(apiPath, options = {}) {
   const timeoutMs = options.timeout || API_TIMEOUT_MS;
   const errors = [];
 
   for (const baseUrl of RADIO_BROWSER_SERVERS) {
-    const url = `${baseUrl}${path}`;
+    const url = `${baseUrl}${apiPath}`;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -75,26 +80,45 @@ function transformStation(station) {
   };
 }
 
-async function fetchAllStations() {
+function cleanupRadioStationsDir(outputDir) {
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+    return;
+  }
+
+  const entries = fs.readdirSync(outputDir, { withFileTypes: true });
+  for (const entry of entries) {
+    if (entry.name === 'index.html') continue;
+
+    const fullPath = path.join(outputDir, entry.name);
+    if (entry.isDirectory()) {
+      fs.rmSync(fullPath, { recursive: true, force: true });
+    } else {
+      fs.unlinkSync(fullPath);
+    }
+  }
+}
+
+async function fetchAllStations(outputBaseDir) {
   console.log('Fetching all stations from Radio Browser...');
   const startTime = Date.now();
-  const PAGE_SIZE = 10000;
   let offset = 0;
   let allStations = [];
   let pageCount = 0;
+  let totalPages = 0;
 
   while (true) {
-    const path = `/json/stations/search?limit=${PAGE_SIZE}&offset=${offset}&order=votes&reverse=true&hidebroken=true&lastcheckok=1`;
+    const apiPath = `/json/stations/search?limit=${PAGE_SIZE}&offset=${offset}&order=votes&reverse=true&hidebroken=true&lastcheckok=1`;
 
     let page = null;
     let lastError = null;
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
-        page = await fetchFromRadioBrowser(path);
+        page = await fetchFromRadioBrowser(apiPath);
         break;
       } catch (error) {
         lastError = error;
-        console.warn(`Page ${pageCount + 1} attempt ${attempt} failed: ${error.message}`);
+        console.warn(`Page ${pageCount} attempt ${attempt} failed: ${error.message}`);
         if (attempt < 3) {
           await new Promise(resolve => setTimeout(resolve, 1000));
         }
@@ -102,36 +126,77 @@ async function fetchAllStations() {
     }
 
     if (page === null) {
-      throw new Error(`Page ${pageCount + 1} failed after 3 attempts: ${lastError.message}`);
+      throw new Error(`Page ${pageCount} failed after 3 attempts: ${lastError.message}`);
     }
 
     if (page.length === 0) break;
 
-    allStations = allStations.concat(page);
-    pageCount++;
-    console.log(`  Page ${pageCount}: +${page.length} stations (total: ${allStations.length})`);
+    const transformedPage = page.map(transformStation);
+
+    // Write per-page shard
+    const pageDir = path.join(outputBaseDir, String(pageCount));
+    fs.mkdirSync(pageDir, { recursive: true });
+    const pagePath = path.join(pageDir, 'stations.json');
+    fs.writeFileSync(pagePath, JSON.stringify(transformedPage, null, 0));
+
+    allStations = allStations.concat(transformedPage);
+    totalPages++;
+    console.log(`  Page ${pageCount}: +${transformedPage.length} stations (total: ${allStations.length})`);
 
     if (page.length < PAGE_SIZE) break;
+    pageCount++;
     offset += PAGE_SIZE;
   }
 
-  const transformed = allStations.map(transformStation);
   const duration = Date.now() - startTime;
-  console.log(`Fetched ${transformed.length} stations in ${duration}ms`);
+  console.log(`Fetched ${allStations.length} stations in ${duration}ms across ${totalPages} page(s)`);
 
-  return transformed;
+  return { stations: allStations, totalPages };
+}
+
+function writeManifest(outputDir, totalStations, totalPages) {
+  const pages = Array.from({ length: totalPages }, (_, i) => {
+    const expectedCount = i === totalPages - 1
+      ? totalStations - (i * PAGE_SIZE)
+      : PAGE_SIZE;
+    return {
+      page: i,
+      path: `/${i}/stations.json`,
+      count: expectedCount
+    };
+  });
+
+  const manifest = {
+    totalStations,
+    pageSize: PAGE_SIZE,
+    totalPages,
+    lastUpdated: new Date().toISOString(),
+    pages
+  };
+
+  const manifestPath = path.join(outputDir, 'index.json');
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+  console.log(`Wrote manifest to ${manifestPath}`);
 }
 
 async function main() {
   try {
-    const stations = await fetchAllStations();
+    const outputDir = path.resolve(__dirname, '..', '..', 'radio-stations');
 
-    const outputPath = path.resolve(__dirname, '..', '..', 'radio-stations', 'stations.json');
-    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-    fs.writeFileSync(outputPath, JSON.stringify(stations, null, 0));
+    cleanupRadioStationsDir(outputDir);
+    console.log(`Cleaned up ${outputDir} (preserved index.html)`);
 
-    const stats = fs.statSync(outputPath);
-    console.log(`Wrote ${stations.length} stations to ${outputPath} (${(stats.size / 1024 / 1024).toFixed(2)} MB)`);
+    const { stations, totalPages } = await fetchAllStations(outputDir);
+
+    // Write consolidated stations.json (backward compatible)
+    const stationsPath = path.join(outputDir, 'stations.json');
+    fs.writeFileSync(stationsPath, JSON.stringify(stations, null, 0));
+
+    const stats = fs.statSync(stationsPath);
+    console.log(`Wrote ${stations.length} stations to ${stationsPath} (${(stats.size / 1024 / 1024).toFixed(2)} MB)`);
+
+    // Write manifest
+    writeManifest(outputDir, stations.length, totalPages);
   } catch (error) {
     console.error('Failed to fetch stations:', error);
     process.exit(1);
