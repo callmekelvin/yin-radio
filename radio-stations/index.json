@@ -1,0 +1,38 @@
+{
+  "totalStations": 58725,
+  "pageSize": 10000,
+  "totalPages": 6,
+  "lastUpdated": "2026-09-04T10:21:40.095Z",
+  "pages": [
+    {
+      "page": 0,
+      "path": "/0/stations.json",
+      "count": 10000
+    },
+    {
+      "page": 1,
+      "path": "/1/stations.json",
+      "count": 10000
+    },
+    {
+      "page": 2,
+      "path": "/2/stations.json",
+      "count": 10000
+    },
+    {
+      "page": 3,
+      "path": "/3/stations.json",
+      "count": 10000
+    },
+    {
+      "page": 4,
+      "path": "/4/stations.json",
+      "count": 10000
+    },
+    {
+      "page": 5,
+      "path": "/5/stations.json",
+      "count": 8725
+    }
+  ]
+}
