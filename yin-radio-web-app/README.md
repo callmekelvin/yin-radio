@@ -49,15 +49,31 @@ cd yin-radio-web-app
 npm install
 ```
 
+### CSS / Styling
+
+The UI uses **Tailwind CSS v4**. Styles are compiled from `public/css/input.css` into `public/css/output.css`, which is what `index.html` loads.
+
+**One-time production build:**
+
+```bash
+npm run build:css
+```
+
+**Watch mode (auto-recompiles on change):**
+
+```bash
+npm run watch:css
+```
+
 ### Run
 
-Development mode (with Tailwind CSS watch):
+**Development mode** — runs the CSS watcher and the Express server together:
 
 ```bash
 npm run dev
 ```
 
-Production mode:
+**Production mode** — runs the server only (make sure you have already built the CSS):
 
 ```bash
 npm start
