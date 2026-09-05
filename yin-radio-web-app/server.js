@@ -67,10 +67,8 @@ app.get('/proxy', async (req, res) => {
       res.setHeader('Content-Length', contentLength);
     }
 
-    const acceptRanges = upstreamRes.headers['accept-ranges'];
-    if (acceptRanges) {
-      res.setHeader('Accept-Ranges', acceptRanges);
-    }
+    // Prevent browser from sending Range resume requests on live streams
+    res.setHeader('Accept-Ranges', 'none');
 
     // Forward all ICY / Icecast headers
     Object.keys(upstreamRes.headers).forEach((key) => {
@@ -92,19 +90,12 @@ app.get('/proxy', async (req, res) => {
     }
   });
 
-  // Connection timeout (only for establishing the connection, not the whole stream)
-  upstreamReq.setTimeout(10000, () => {
-    console.error('Proxy connection timeout for:', streamUrl);
-    upstreamReq.destroy();
-    if (!res.headersSent) {
-      res.status(504).json({ error: 'Upstream connection timeout' });
-    }
-  });
-
   upstreamReq.on('error', (error) => {
     console.error('Proxy error:', error.message, '| Code:', error.code);
     if (!res.headersSent) {
       res.status(500).json({ error: 'Failed to proxy stream' });
+    } else {
+      res.end();
     }
   });
 

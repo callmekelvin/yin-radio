@@ -33,6 +33,11 @@ function radioApp() {
     // Audio element
     audio: null,
 
+    // Reconnect state
+    reconnectAttempts: 0,
+    reconnectTimer: null,
+    stalledTimer: null,
+
     async init() {
       // Initialize audio element
       this.audio = new Audio();
@@ -42,6 +47,7 @@ function radioApp() {
       this.audio.addEventListener('play', () => {
         this.isPlaying = true;
         this.isBuffering = false;
+        this.clearReconnect();
       });
 
       this.audio.addEventListener('pause', () => {
@@ -50,20 +56,32 @@ function radioApp() {
 
       this.audio.addEventListener('waiting', () => {
         this.isBuffering = true;
+        this.clearStalledTimer();
       });
 
       this.audio.addEventListener('canplay', () => {
         this.isBuffering = false;
+        this.clearStalledTimer();
       });
 
       this.audio.addEventListener('error', (e) => {
         console.error('Audio error:', e);
         this.isPlaying = false;
         this.isBuffering = false;
+        if (this.currentStation) {
+          this.scheduleReconnect();
+        }
       });
 
       this.audio.addEventListener('stalled', () => {
         this.isBuffering = true;
+        this.clearStalledTimer();
+        this.stalledTimer = setTimeout(() => {
+          if (this.isPlaying && this.currentStation) {
+            console.warn('Stalled for 5s, triggering reconnect');
+            this.scheduleReconnect();
+          }
+        }, 5000);
       });
 
       // Load stations JSON
@@ -123,6 +141,7 @@ function radioApp() {
 
     clearError() {
       this.errorMessage = null;
+      this.clearReconnect();
     },
 
     buildFilterParams() {
@@ -318,6 +337,9 @@ function radioApp() {
         return;
       }
 
+      // Clear any pending reconnect state before starting a new stream
+      this.clearReconnect();
+
       // Stop current playback
       this.audio.pause();
       this.audio.currentTime = 0;
@@ -352,7 +374,44 @@ function radioApp() {
         }
       } else {
         this.audio.pause();
+        this.clearReconnect();
       }
+    },
+
+    clearStalledTimer() {
+      if (this.stalledTimer) {
+        clearTimeout(this.stalledTimer);
+        this.stalledTimer = null;
+      }
+    },
+
+    clearReconnect() {
+      this.clearStalledTimer();
+      if (this.reconnectTimer) {
+        clearTimeout(this.reconnectTimer);
+        this.reconnectTimer = null;
+      }
+      this.reconnectAttempts = 0;
+    },
+
+    scheduleReconnect() {
+      if (this.reconnectAttempts >= 5) {
+        this.errorMessage = 'Stream unavailable. Please try another station.';
+        this.isBuffering = false;
+        return;
+      }
+
+      this.reconnectAttempts++;
+      this.isBuffering = true;
+      const delay = Math.min(2 * this.reconnectAttempts, 30) * 1000;
+
+      console.log(`Scheduling reconnect attempt ${this.reconnectAttempts}/5 in ${delay}ms`);
+
+      this.reconnectTimer = setTimeout(() => {
+        if (this.currentStation) {
+          this.playStation(this.currentStation);
+        }
+      }, delay);
     },
 
     setVolume(value) {

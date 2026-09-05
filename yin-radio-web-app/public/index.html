@@ -46,6 +46,9 @@
                   <span x-show="currentStation?.bitrate"> • <span x-text="currentStation?.bitrate"></span> kbps</span>
                   <span x-show="currentStation?.codec"> • <span x-text="currentStation?.codec"></span></span>
                 </p>
+                <p x-show="isBuffering && reconnectAttempts > 0" class="text-xs text-amber-400 truncate mt-0.5">
+                  Reconnecting… (<span x-text="reconnectAttempts"></span>/5)
+                </p>
               </div>
             </div>
             <p x-show="!currentStation" class="text-gray-400">Select a station to play</p>
