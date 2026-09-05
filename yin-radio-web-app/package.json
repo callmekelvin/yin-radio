@@ -5,12 +5,23 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "concurrently \"npm:watch:css\" \"node server.js\"",
+    "build:css": "tailwindcss -i ./public/css/input.css -o ./public/css/output.css --minify",
+    "watch:css": "tailwindcss -i ./public/css/input.css -o ./public/css/output.css --watch"
   },
-  "keywords": ["radio", "internet-radio", "streaming"],
+  "keywords": [
+    "radio",
+    "internet-radio",
+    "streaming"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
     "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "concurrently": "^10.0.5",
+    "tailwindcss": "^4.0.0"
   }
 }

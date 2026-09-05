@@ -1,0 +1,100 @@
+@import "tailwindcss";
+@source "../**/*.html";
+@source "../**/*.js";
+
+@layer base {
+  [x-cloak] {
+    display: none !important;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-runnable-track {
+    background: #374151;
+    height: 4px;
+    border-radius: 2px;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    background: #10b981;
+    height: 14px;
+    width: 14px;
+    border-radius: 50%;
+    margin-top: -5px;
+  }
+
+  input[type="range"]::-moz-range-track {
+    background: #374151;
+    height: 4px;
+    border-radius: 2px;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    background: #10b981;
+    height: 14px;
+    width: 14px;
+    border-radius: 50%;
+    border: none;
+  }
+}
+
+@layer components {
+  .app-container {
+    @apply max-w-3xl mx-auto px-4;
+  }
+
+  .input-search {
+    @apply w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-colors;
+  }
+
+  .select-dark {
+    @apply flex-1 min-w-0 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors;
+  }
+
+  .btn-play {
+    @apply flex-shrink-0 w-12 h-12 bg-emerald-500 hover:bg-emerald-400 rounded-full flex items-center justify-center transition-colors;
+  }
+
+  .btn-play-sm {
+    @apply w-10 h-10 rounded-full flex items-center justify-center transition-colors;
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2.5 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm transition-colors;
+  }
+
+  .btn-icon {
+    @apply w-8 h-8 rounded-full flex items-center justify-center bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-white transition-colors;
+  }
+
+  .station-card {
+    @apply bg-gray-800 hover:bg-gray-700 rounded-lg p-3 cursor-pointer transition-colors;
+  }
+
+  .error-banner {
+    @apply mb-4 bg-red-900/50 border border-red-700 rounded-lg p-4 flex items-center justify-between gap-4;
+  }
+
+  .modal-overlay {
+    @apply fixed inset-0 z-[60] bg-black/70 flex items-center justify-center p-4;
+  }
+
+  .modal-panel {
+    @apply bg-gray-800 border border-gray-700 rounded-xl shadow-2xl max-w-md w-full p-6 space-y-4;
+  }
+
+  .skeleton-card {
+    @apply bg-gray-800 rounded-lg p-4 animate-pulse;
+  }
+
+  .badge {
+    @apply text-xs bg-gray-700 px-2 py-1 rounded;
+  }
+}

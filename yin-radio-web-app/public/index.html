@@ -4,61 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Yin Radio</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/output.css">
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.3/dist/cdn.min.js"></script>
-  <style>
-    [x-cloak] { display: none !important; }
-    input[type="range"] {
-      -webkit-appearance: none;
-      appearance: none;
-      background: transparent;
-      cursor: pointer;
-    }
-    input[type="range"]::-webkit-slider-runnable-track {
-      background: #374151;
-      height: 4px;
-      border-radius: 2px;
-    }
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      background: #10b981;
-      height: 14px;
-      width: 14px;
-      border-radius: 50%;
-      margin-top: -5px;
-    }
-    input[type="range"]::-moz-range-track {
-      background: #374151;
-      height: 4px;
-      border-radius: 2px;
-    }
-    input[type="range"]::-moz-range-thumb {
-      background: #10b981;
-      height: 14px;
-      width: 14px;
-      border-radius: 50%;
-      border: none;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    .animate-spin {
-      animation: spin 1s linear infinite;
-    }
-  </style>
 </head>
 <body class="bg-gray-900 text-white min-h-screen">
   <div x-data="radioApp()" x-init="init()" x-cloak>
 
     <!-- Player Bar -->
     <header class="sticky top-0 z-50 bg-gray-800 border-b border-gray-700 shadow-lg">
-      <div class="max-w-3xl mx-auto px-4 py-3">
+      <div class="app-container py-3">
         <div class="flex items-center gap-4">
           <!-- Play/Pause -->
           <button
             @click="togglePlay()"
-            class="flex-shrink-0 w-12 h-12 bg-emerald-500 hover:bg-emerald-400 rounded-full flex items-center justify-center transition-colors"
+            class="btn-play"
             :disabled="!currentStation"
             :class="{ 'opacity-50 cursor-not-allowed': !currentStation }"
           >
@@ -112,7 +71,7 @@
     </header>
 
     <!-- Filters -->
-    <section x-show="dataLoaded" class="max-w-3xl mx-auto px-4 py-4">
+    <section x-show="dataLoaded" class="app-container py-4">
       <div class="space-y-3">
         <!-- Search Row -->
         <div class="flex gap-2">
@@ -122,7 +81,7 @@
               x-model="searchQuery"
               @input.debounce.300ms="fetchFilterCounts(); fetchStations(true)"
               placeholder="Search stations..."
-              class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-500 transition-colors"
+              class="input-search"
             >
             <svg class="w-5 h-5 text-gray-500 absolute right-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -131,7 +90,7 @@
           <button
             @click="clearFilters()"
             x-show="searchQuery || selectedCountry || selectedLanguage || selectedTag"
-            class="px-4 py-2.5 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm transition-colors"
+            class="btn-secondary"
           >
             Clear
           </button>
@@ -142,7 +101,7 @@
           <select
             x-model="selectedCountry"
             @change="fetchFilterCounts(); fetchStations(true)"
-            class="flex-1 min-w-0 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+            class="select-dark"
           >
             <option value="">All Countries</option>
             <template x-for="country in countries" :key="country.code">
@@ -153,7 +112,7 @@
           <select
             x-model="selectedLanguage"
             @change="fetchFilterCounts(); fetchStations(true)"
-            class="flex-1 min-w-0 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+            class="select-dark"
           >
             <option value="">All Languages</option>
             <template x-for="lang in languages" :key="lang.name">
@@ -164,7 +123,7 @@
           <select
             x-model="selectedTag"
             @change="fetchFilterCounts(); fetchStations(true)"
-            class="flex-1 min-w-0 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors"
+            class="select-dark"
           >
             <option value="">All Genres</option>
             <template x-for="tag in tags" :key="tag.name">
@@ -191,12 +150,12 @@
     </div>
 
     <!-- Station List -->
-    <main x-show="dataLoaded" class="max-w-3xl mx-auto px-4 pb-8">
+    <main x-show="dataLoaded" class="app-container pb-8">
       <!-- Error Banner -->
       <div
         x-show="errorMessage"
         x-transition
-        class="mb-4 bg-red-900/50 border border-red-700 rounded-lg p-4 flex items-center justify-between gap-4"
+        class="error-banner"
       >
         <div class="flex items-center gap-3 min-w-0">
           <svg class="w-5 h-5 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -223,7 +182,7 @@
       <!-- Loading -->
       <div x-show="isLoading" class="space-y-3">
         <template x-for="i in 5" :key="i">
-          <div class="bg-gray-800 rounded-lg p-4 animate-pulse">
+          <div class="skeleton-card">
             <div class="flex items-center gap-4">
               <div class="w-12 h-12 bg-gray-700 rounded-lg flex-shrink-0"></div>
               <div class="flex-1 space-y-2">
@@ -250,7 +209,7 @@
         <template x-for="station in stations" :key="station.stationuuid">
           <div
             @click="playStation(station)"
-            class="bg-gray-800 hover:bg-gray-700 rounded-lg p-3 cursor-pointer transition-colors group"
+            class="station-card group"
             :class="{ 'border-l-4 border-emerald-400': currentStation?.stationuuid === station.stationuuid }"
           >
             <div class="flex items-center gap-3">
@@ -279,12 +238,12 @@
 
               <!-- Meta -->
               <div class="flex items-center gap-3 flex-shrink-0">
-                <span x-show="station.bitrate" class="text-xs bg-gray-700 px-2 py-1 rounded" x-text="station.bitrate + ' kbps'"></span>
+                <span x-show="station.bitrate" class="badge" x-text="station.bitrate + ' kbps'"></span>
 
                 <!-- Info Button -->
                 <button
                   @click.stop="showStationInfo(station)"
-                  class="w-8 h-8 rounded-full flex items-center justify-center bg-gray-700 hover:bg-gray-600 text-gray-400 hover:text-white transition-colors"
+                  class="btn-icon"
                   title="Station info"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -294,7 +253,7 @@
 
                 <!-- Play Indicator -->
                 <div
-                  class="w-10 h-10 rounded-full flex items-center justify-center transition-colors"
+                  class="btn-play-sm"
                   :class="currentStation?.stationuuid === station.stationuuid && isPlaying ? 'bg-emerald-500' : 'bg-gray-700 group-hover:bg-gray-600'"
                 >
                   <svg x-show="!(currentStation?.stationuuid === station.stationuuid && isPlaying)" class="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
@@ -329,14 +288,14 @@
     <div
       x-show="selectedStationInfo"
       x-transition.opacity.duration.200ms
-      class="fixed inset-0 z-[60] bg-black/70 flex items-center justify-center p-4"
+      class="modal-overlay"
       @click="closeStationInfo()"
     >
       <div
         x-show="selectedStationInfo"
         x-transition.scale.duration.200ms
         @click.stop
-        class="bg-gray-800 border border-gray-700 rounded-xl shadow-2xl max-w-md w-full p-6 space-y-4"
+        class="modal-panel"
       >
         <!-- Header -->
         <div class="flex items-start justify-between gap-4">
