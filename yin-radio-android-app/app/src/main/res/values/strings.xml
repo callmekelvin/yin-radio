@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Yin Radio</string>
+    <string name="playback_notification_text">Playing radio</string>
+</resources>
