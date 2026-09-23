@@ -1,0 +1,66 @@
+name: Android Build
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  debug-build:
+    name: Debug Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: yin-radio-android-app
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v6
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: debug-apk
+          path: yin-radio-android-app/app/build/outputs/apk/debug/*.apk
+
+  release-build:
+    name: Release Build
+    needs: debug-build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: yin-radio-android-app
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v6
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build Release APK
+        run: ./gradlew assembleRelease
+
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-apk
+          path: yin-radio-android-app/app/build/outputs/apk/release/*.apk
