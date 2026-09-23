@@ -73,9 +73,7 @@ fun StationCard(
             ) {
                 Text(
                     text = station.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    style = MaterialTheme.typography.titleMedium
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
