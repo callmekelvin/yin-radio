@@ -190,7 +190,7 @@ class MainViewModel(
             _uiState.update {
                 if (it.currentStation?.stationuuid == station.stationuuid) {
                     it.copy(
-                        currentStation = it.currentStation?.copy(isFavorite = !station.isFavorite)
+                        currentStation = it.currentStation.copy(isFavorite = !station.isFavorite)
                     )
                 }
                 else {
