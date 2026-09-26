@@ -12,6 +12,16 @@ android {
     namespace = "com.yin_radio.yin_radio_android_app"
     compileSdk = 37
 
+    val localProperties = Properties()
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use { localProperties.load(it) }
+    }
+
+    // https://www.reddit.com/r/androiddev/comments/1r7l109/a_quick_guide_to_github_actions_cicd_for_android/
+    // Change to Stations API
+    val stationsBaseUrl = localProperties.getProperty("STATIONS_BASE_URL", "https://callmekelvin.github.io/yin-radio/")
+
     defaultConfig {
         applicationId = "com.yin_radio.yin_radio_android_app"
         minSdk = 24
@@ -20,16 +30,17 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        val localProperties = Properties()
-        val localPropertiesFile = rootProject.file("local.properties")
-        if (localPropertiesFile.exists()) {
-            localPropertiesFile.inputStream().use { localProperties.load(it) }
-        }
-
-        // Change to Stations API
-        val stationsBaseUrl = localProperties.getProperty("STATIONS_BASE_URL", "https://callmekelvin.github.io/yin-radio/")
         buildConfigField("String", "STATIONS_BASE_URL", "\"$stationsBaseUrl\"")
+    }
+
+    // Read from local.properties file, fallback to System ENVs if building from CI Deployment
+    signingConfigs {
+        create("release") {
+            storeFile = file("../upload-keystore.jks")
+            storePassword = localProperties.getProperty("STORE_PASSWORD") ?: System.getenv("STORE_PASSWORD")
+            keyAlias = localProperties.getProperty("KEY_ALIAS") ?: System.getenv("KEY_ALIAS")
+            keyPassword = localProperties.getProperty("KEY_PASSWORD") ?: System.getenv("KEY_PASSWORD")
+        }
     }
 
     buildTypes {
@@ -42,10 +53,13 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
