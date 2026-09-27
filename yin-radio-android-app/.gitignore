@@ -14,3 +14,7 @@
 /captures
 .externalNativeBuild
 .cxx
+/app/debug
+/app/release
+upload-keystore
+upload-keystore.jks

@@ -65,6 +65,7 @@ Step-by-step instructions for building the Yin Radio Android app via Android Stu
 - Release builds enable **R8 code shrinking** (`isMinifyEnabled = true`) and **resource shrinking** (`isShrinkResources = true`).
 - ProGuard rules are defined in `app/proguard-rules.pro`.
 - Uses the production stations API URL.
+- For automated signed builds in CI, see the **CI/CD via GitHub Actions** section below.
 
 ---
 
@@ -85,44 +86,40 @@ Step-by-step instructions for building the Yin Radio Android app via Android Stu
 
 ---
 
-## Build Configuration (`app/build.gradle.kts`)
+## CI/CD via GitHub Actions
 
-The build types are defined in `app/build.gradle.kts` inside the `buildTypes { }` block:
+The project includes an automated workflow at `.github/workflows/android-build.yml` that builds and signs the app on every push to `main` (and can be triggered manually).
 
-```kotlin
-buildTypes {
-    debug {
-        applicationIdSuffix = ".debug"
-        versionNameSuffix = "-debug"
-        isDebuggable = true
-    }
+### Workflow Jobs
 
-    release {
-        isMinifyEnabled = true
-        isShrinkResources = true
-        proguardFiles(
-            getDefaultProguardFile("proguard-android-optimize.txt"),
-            "proguard-rules.pro"
-        )
-    }
-}
+| Job | Purpose | Output Artifact |
+|-----|---------|-----------------|
+| `debug-build` | Builds unsigned debug APK | `debug-apk` |
+| `release-build` | Builds **signed** release APK | `release-apk` |
+
+### Required GitHub Secrets
+
+Configure these four secrets in **Settings → Secrets and variables → Actions**:
+
+| Secret | Description |
+|--------|-------------|
+| `KEYSTORE_BASE64` | Base64-encoded contents of `upload-keystore.jks` |
+| `STORE_PASSWORD` | Keystore store password |
+| `KEY_ALIAS` | Signing key alias |
+| `KEY_PASSWORD` | Signing key password |
+
+**Encode your keystore:**
+```bash
+base64 -w 0 upload-keystore.jks
 ```
+Copy the output and paste it as the `KEYSTORE_BASE64` secret.
 
-| Property | Debug | Release |
-|----------|-------|---------|
-| `applicationIdSuffix` | `.debug` | — |
-| `isDebuggable` | `true` | `false` |
-| `isMinifyEnabled` | — | `true` |
-| `isShrinkResources` | — | `true` |
-| ProGuard rules | — | `proguard-rules.pro` |
+### Downloading Artifacts
 
-**Other key settings in `app/build.gradle.kts`:**
-- `compileSdk = 37`
-- `minSdk = 24` (Android 7.0+)
-- `targetSdk = 37`
-- `versionCode = 1`
-- `versionName = "1.0"`
-- `STATIONS_BASE_URL` is read from `local.properties` (fallback: `https://callmekelvin.github.io/yin-radio/`)
+1. Go to the **Actions** tab in the GitHub repo.
+2. Click on the latest `Android Build` run.
+3. Scroll to the **Artifacts** section at the bottom.
+4. Download `debug-apk` or `release-apk`.
 
 ---
 
@@ -134,3 +131,4 @@ buildTypes {
 | Release APK | `./gradlew :app:assembleRelease` |
 | Release AAB | `./gradlew :app:bundleRelease` |
 | Clean build | `./gradlew clean` |
+| CI Trigger (manual) | **Actions → Android Build → Run workflow** |

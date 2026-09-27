@@ -22,6 +22,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: gradle
+          cache-dependency-path: |
+            yin-radio-android-app/**/*.gradle*
+            yin-radio-android-app/**/gradle-wrapper.properties
+            yin-radio-android-app/**/gradle.properties
+            yin-radio-android-app/gradle/*.versions.toml
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -52,11 +57,23 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: gradle
+          cache-dependency-path: |
+            yin-radio-android-app/**/*.gradle*
+            yin-radio-android-app/**/gradle-wrapper.properties
+            yin-radio-android-app/**/gradle.properties
+            yin-radio-android-app/gradle/*.versions.toml
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Decode Keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > upload-keystore.jks
+
       - name: Build Release APK
+        env:
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: ./gradlew assembleRelease
 
       - name: Upload Release APK
