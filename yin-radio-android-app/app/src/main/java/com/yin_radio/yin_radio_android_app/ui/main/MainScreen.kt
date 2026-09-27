@@ -16,10 +16,21 @@ import android.util.Log
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.Alignment
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import com.yin_radio.yin_radio_android_app.R
 import com.yin_radio.yin_radio_android_app.domain.model.Station
 import com.yin_radio.yin_radio_android_app.ui.components.NowPlayingBar
@@ -47,6 +58,14 @@ fun MainScreen(
     }
 
     val uiState by viewModel.uiState.collectAsState()
+
+    // Auto-dismiss error banner after 3 seconds
+    LaunchedEffect(uiState.errorMessage) {
+        uiState.errorMessage?.let {
+            delay(3000L)
+            viewModel.clearError()
+        }
+    }
 
     Box(modifier = modifier.fillMaxSize().safeDrawingPadding()) {
         Scaffold(
@@ -104,6 +123,27 @@ fun MainScreen(
                 onNext = { viewModel.playNext() },
                 onFavoriteClick = { uiState.currentStation?.let { viewModel.toggleFavorite(it) } }
             )
+        }
+
+        // Slides up from bottom when a playback error occurs, slides down when dismissed after 3s
+        AnimatedVisibility(
+            visible = uiState.errorMessage != null,
+            enter = slideInVertically { it },
+            exit = slideOutVertically { it },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 80.dp)
+        ) {
+            Card(
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFD32F2F)),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Text(
+                    text = uiState.errorMessage ?: "",
+                    color = Color.White,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                )
+            }
         }
     }
 }
