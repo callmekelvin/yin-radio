@@ -1,8 +1,8 @@
 {
-  "totalStations": 59670,
+  "totalStations": 59687,
   "pageSize": 10000,
   "totalPages": 6,
-  "lastUpdated": "2026-09-28T07:59:18.594Z",
+  "lastUpdated": "2026-09-28T10:30:34.015Z",
   "pages": [
     {
       "page": 0,
@@ -32,7 +32,7 @@
     {
       "page": 5,
       "path": "/5/stations.json",
-      "count": 9670
+      "count": 9687
     }
   ]
 }
