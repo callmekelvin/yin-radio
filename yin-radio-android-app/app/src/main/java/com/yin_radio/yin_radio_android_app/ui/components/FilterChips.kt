@@ -17,6 +17,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.yin_radio.yin_radio_android_app.R
 
@@ -54,7 +55,7 @@ fun FilterChips(
                             Spacer(modifier = Modifier.width(4.dp))
                             Icon(
                                 painter = painterResource(R.drawable.ic_close),
-                                contentDescription = "Remove filter",
+                                contentDescription = stringResource(R.string.filter_remove),
                                 modifier = Modifier.width(16.dp)
                             )
                         }

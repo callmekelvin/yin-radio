@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App & System -->
+    <string name="app_name">Yin Radio</string>
+    <string name="playback_notification_text">Reproduciendo radio</string>
+    <string name="notification_channel_name">Reproducción de radio</string>
+    <string name="notification_channel_description">Controles para la reproducción de Yin Radio</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">Inicio</string>
+    <string name="nav_favorites">Favoritos</string>
+    <string name="nav_settings">Ajustes</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_welcome">Bienvenido a Yin Radio</string>
+    <string name="onboarding_description">Descarga el catálogo de estaciones para comenzar. Esto requiere una conexión a internet.</string>
+    <string name="onboarding_downloading">Descargando estaciones…</string>
+    <string name="onboarding_button_download">Descargar estaciones</string>
+
+    <!-- Home -->
+    <string name="home_error_loading">Error al cargar estaciones</string>
+
+    <!-- Favorites -->
+    <string name="favorites_title">Favoritos</string>
+    <string name="favorites_empty">Aún no hay favoritos.</string>
+
+    <!-- Expanded Player -->
+    <string name="player_select_station">Selecciona una estación</string>
+    <string name="player_back">Atrás</string>
+    <string name="player_share">Compartir</string>
+    <string name="player_previous">Anterior</string>
+    <string name="player_play">Reproducir</string>
+    <string name="player_pause">Pausar</string>
+    <string name="player_next">Siguiente</string>
+    <string name="player_favorite">Favorito</string>
+
+    <!-- Search & Filters -->
+    <string name="search_placeholder">Buscar estaciones…</string>
+    <string name="search_clear">Borrar</string>
+    <string name="filter_country">País</string>
+    <string name="filter_language">Idioma</string>
+    <string name="filter_tags_label">Etiquetas:</string>
+    <string name="filter_add">+ Añadir</string>
+    <string name="filter_clear">Borrar filtros</string>
+    <string name="filter_confirm">Confirmar</string>
+    <string name="filter_select_country">Seleccionar país</string>
+    <string name="filter_select_language">Seleccionar idioma</string>
+    <string name="filter_select_tags">Seleccionar etiquetas</string>
+    <string name="filter_cancel">Cancelar</string>
+    <string name="filter_done">Hecho</string>
+    <string name="filter_remove">Eliminar filtro</string>
+    <string name="filter_select_placeholder">+ Seleccionar</string>
+
+    <!-- Station Card -->
+    <string name="station_remove_favorite">Eliminar de favoritos</string>
+    <string name="station_add_favorite">Añadir a favoritos</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_appearance">Apariencia</string>
+    <string name="settings_theme_light">Claro</string>
+    <string name="settings_theme_dark">Oscuro</string>
+    <string name="settings_theme_system">Seguir sistema</string>
+    <string name="settings_playback">Reproducción</string>
+    <string name="settings_allow_http">Permitir streams HTTP</string>
+    <string name="settings_allow_http_desc">Habilitar la reproducción de estaciones que usan streams HTTP sin cifrar</string>
+    <string name="settings_data">Datos</string>
+    <string name="settings_about">Acerca de</string>
+    <string name="settings_about_app_name">Yin Radio</string>
+    <string name="settings_about_data_prefix">Datos obtenidos de </string>
+    <string name="settings_about_created_prefix">Creado por </string>
+    <string name="settings_syncing">Sincronizando estaciones…</string>
+    <string name="settings_resync_manifest">Resincronizar manifiesto de estaciones</string>
+    <string name="settings_sync_up_to_date">Actualizado</string>
+    <string name="settings_sync_last_updated">Última actualización: %1$s</string>
+    <string name="settings_sync_download_latest">Descargar el manifiesto más reciente de estaciones</string>
+    <string name="settings_sync_complete">Sincronización del manifiesto completada</string>
+
+    <!-- ViewModel Errors -->
+    <string name="error_station_unavailable">Estación no disponible.</string>
+    <string name="error_stream_unsupported">Formato de stream no compatible.</string>
+    <string name="error_playback_generic">Error de reproducción.</string>
+    <string name="error_http_required">Esta estación requiere reproducción HTTP. Actívala en Ajustes.</string>
+    <string name="error_no_previous_station">No hay estación anterior disponible.</string>
+    <string name="error_no_next_station">No hay estación siguiente disponible.</string>
+    <string name="error_sync_failed">Error de sincronización</string>
+    <string name="error_loading_stations">Se produjo un error al cargar las estaciones.</string>
+</resources>

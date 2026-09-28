@@ -25,6 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
@@ -33,10 +34,10 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import android.text.format.DateUtils
+import com.yin_radio.yin_radio_android_app.R
 import com.yin_radio.yin_radio_android_app.data.local.prefs.ThemeMode
 import com.yin_radio.yin_radio_android_app.ui.sync.StationSyncUiState
 import com.yin_radio.yin_radio_android_app.ui.sync.StationSyncViewModel
-import com.yin_radio.yin_radio_android_app.R
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -76,14 +77,14 @@ fun SettingsScreen(
             .padding(16.dp)
             .verticalScroll(scrollState)) {
         Text(
-            text = "Settings",
+            text = stringResource(R.string.settings_title),
             style = MaterialTheme.typography.headlineLarge
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Appearance",
+            text = stringResource(R.string.settings_appearance),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary
         )
@@ -104,11 +105,13 @@ fun SettingsScreen(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = when (mode) {
-                        ThemeMode.LIGHT -> "Light"
-                        ThemeMode.DARK -> "Dark"
-                        ThemeMode.SYSTEM -> "Follow System"
-                    }
+                    text = stringResource(
+                        when (mode) {
+                            ThemeMode.LIGHT -> R.string.settings_theme_light
+                            ThemeMode.DARK -> R.string.settings_theme_dark
+                            ThemeMode.SYSTEM -> R.string.settings_theme_system
+                        }
+                    )
                 )
             }
         }
@@ -118,7 +121,7 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Playback",
+            text = stringResource(R.string.settings_playback),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary
         )
@@ -132,9 +135,9 @@ fun SettingsScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = "Allow HTTP streams")
+                Text(text = stringResource(R.string.settings_allow_http))
                 Text(
-                    text = "Enable playback of stations using unencrypted HTTP streams",
+                    text = stringResource(R.string.settings_allow_http_desc),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -150,7 +153,7 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Data",
+            text = stringResource(R.string.settings_data),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary
         )
@@ -167,7 +170,7 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "About",
+            text = stringResource(R.string.settings_about),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary
         )
@@ -175,12 +178,12 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Yin Radio",
+            text = stringResource(R.string.settings_about_app_name),
             style = MaterialTheme.typography.bodyLarge
         )
         Text(
             text = buildAnnotatedString {
-                append("Data sourced from ")
+                append(stringResource(R.string.settings_about_data_prefix))
                 withLink(radioBrowserLink) {
                     append("Radio Browser")
                 }
@@ -195,7 +198,7 @@ fun SettingsScreen(
 
         Text(
             text = buildAnnotatedString {
-                append("Created by ")
+                append(stringResource(R.string.settings_about_created_prefix))
                 withLink(githubLink) {
                     append("callmekelvin")
                 }
@@ -224,7 +227,7 @@ private fun StationSyncSection(
                 CircularProgressIndicator()
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = "Syncing stations...",
+                    text = stringResource(R.string.settings_syncing),
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
@@ -237,19 +240,19 @@ private fun StationSyncSection(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(text = "Resync Radio Station Manifest")
+                    Text(text = stringResource(R.string.settings_resync_manifest))
 
                     val subtitle = when {
-                        syncState.isComplete -> "Up to date"
+                        syncState.isComplete -> stringResource(R.string.settings_sync_up_to_date)
                         syncState.lastSyncTimestamp != null -> {
                             val relativeTime = DateUtils.getRelativeTimeSpanString(
                                 syncState.lastSyncTimestamp,
                                 System.currentTimeMillis(),
                                 DateUtils.MINUTE_IN_MILLIS
                             )
-                            "Last Updated: $relativeTime"
+                            stringResource(R.string.settings_sync_last_updated, relativeTime)
                         }
-                        else -> "Download the Latest Radio Stations Manifest"
+                        else -> stringResource(R.string.settings_sync_download_latest)
                     }
 
                     Text(
@@ -262,17 +265,17 @@ private fun StationSyncSection(
                 if (syncState.isComplete) {
                     Icon(
                         painter = painterResource(R.drawable.ic_check),
-                        contentDescription = "Radio Station Manifest Sync Complete",
+                        contentDescription = stringResource(R.string.settings_sync_complete),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
         }
 
-        if (syncState.errorMessage != null) {
+        if (syncState.errorMessageRes != null) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = syncState.errorMessage,
+                text = stringResource(syncState.errorMessageRes),
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall
             )

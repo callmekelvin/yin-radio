@@ -45,5 +45,5 @@ class FavoritesViewModel(
 data class FavoritesUiState(
     val favorites: List<Station> = emptyList(),
     val isLoading: Boolean = true,
-    val errorMessage: String? = null
+    val errorMessageRes: Int? = null
 )

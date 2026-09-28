@@ -17,7 +17,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.yin_radio.yin_radio_android_app.R
 import com.yin_radio.yin_radio_android_app.domain.model.Station
 import com.yin_radio.yin_radio_android_app.ui.components.StationCard
 import org.koin.compose.viewmodel.koinViewModel
@@ -38,7 +40,7 @@ fun FavoritesScreen(
 
     Column(modifier = modifier.fillMaxSize()) {
         Text(
-            text = "Favorites",
+            text = stringResource(R.string.favorites_title),
             style = MaterialTheme.typography.headlineLarge,
             modifier = Modifier.padding(16.dp)
         )
@@ -49,7 +51,7 @@ fun FavoritesScreen(
             }
         } else if (uiState.favorites.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = "No favorites yet.")
+                Text(text = stringResource(R.string.favorites_empty))
             }
         } else {
             LazyColumn(

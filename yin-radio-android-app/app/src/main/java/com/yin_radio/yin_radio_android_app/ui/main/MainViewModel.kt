@@ -3,6 +3,7 @@ package com.yin_radio.yin_radio_android_app.ui.main
 import android.app.Application
 import android.content.ComponentName
 import android.util.Log
+import androidx.annotation.StringRes
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
@@ -12,6 +13,7 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.MoreExecutors
+import com.yin_radio.yin_radio_android_app.R
 import com.yin_radio.yin_radio_android_app.data.local.prefs.SettingsDataStore
 import com.yin_radio.yin_radio_android_app.data.repository.FavoritesRepository
 import com.yin_radio.yin_radio_android_app.data.repository.StationRepository
@@ -30,7 +32,7 @@ data class MainUiState(
     val isPlaying: Boolean = false,
     val isBuffering: Boolean = false,
     val isPlayerExpanded: Boolean = false,
-    val errorMessage: String? = null
+    @StringRes val errorMessageRes: Int? = null
 )
 
 class MainViewModel(
@@ -79,19 +81,19 @@ class MainViewModel(
                 }
 
                 override fun onPlayerError(error: PlaybackException) {
-                    val message = when (error.errorCode) {
+                    val messageRes = when (error.errorCode) {
                         PlaybackException.ERROR_CODE_IO_BAD_HTTP_STATUS,
                         PlaybackException.ERROR_CODE_IO_INVALID_HTTP_CONTENT_TYPE,
                         PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED,
                         PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT,
-                        PlaybackException.ERROR_CODE_IO_CLEARTEXT_NOT_PERMITTED -> "Station unavailable."
+                        PlaybackException.ERROR_CODE_IO_CLEARTEXT_NOT_PERMITTED -> R.string.error_station_unavailable
                         PlaybackException.ERROR_CODE_DECODER_INIT_FAILED,
                         PlaybackException.ERROR_CODE_PARSING_CONTAINER_UNSUPPORTED,
-                        PlaybackException.ERROR_CODE_PARSING_MANIFEST_UNSUPPORTED -> "Stream format not supported."
-                        else -> "Playback error."
+                        PlaybackException.ERROR_CODE_PARSING_MANIFEST_UNSUPPORTED -> R.string.error_stream_unsupported
+                        else -> R.string.error_playback_generic
                     }
                     Log.e(TAG, "Playback error: ${error.message}")
-                    _uiState.update { it.copy(errorMessage = message, isPlaying = false, isBuffering = false) }
+                    _uiState.update { it.copy(errorMessageRes = messageRes, isPlaying = false, isBuffering = false) }
                 }
             })
         }, MoreExecutors.directExecutor())
@@ -119,7 +121,7 @@ class MainViewModel(
             // Reads the SettingDataStore Model AllowHTTP Current Value at Point in Time within Coroutine (not within Composable Function)
             val allowHttp = settingsDataStore.allowHttpStreams.first()
             if (station.urlResolved.startsWith("http://") && !allowHttp) {
-                _uiState.update { it.copy(errorMessage = "This station requires HTTP playback. Enable it in Settings.") }
+                _uiState.update { it.copy(errorMessageRes = R.string.error_http_required) }
                 return@launch
             }
 
@@ -140,7 +142,7 @@ class MainViewModel(
             currentResultSet = fromList
             currentIndex = fromList.indexOfFirst { it.stationuuid == station.stationuuid }
 
-            _uiState.update { it.copy(currentStation = station, isPlaying = true, errorMessage = null) }
+            _uiState.update { it.copy(currentStation = station, isPlaying = true, errorMessageRes = null) }
         }
     }
 
@@ -156,7 +158,7 @@ class MainViewModel(
     fun playPrevious() {
         Log.v(TAG, "playPrevious() called")
         if (currentResultSet.isEmpty() || currentIndex <= 0) {
-            _uiState.update { it.copy(errorMessage = "No previous station available.") }
+            _uiState.update { it.copy(errorMessageRes = R.string.error_no_previous_station) }
             return
         }
 
@@ -171,14 +173,14 @@ class MainViewModel(
         mediaController?.prepare()
         mediaController?.play()
 
-        _uiState.update { it.copy(currentStation = station, isPlaying = true, errorMessage = null) }
+        _uiState.update { it.copy(currentStation = station, isPlaying = true, errorMessageRes = null) }
     }
 
     // Play Next Station based off Station List Index
     fun playNext() {
         Log.v(TAG, "playNext() called")
         if (currentResultSet.isEmpty() || currentIndex >= currentResultSet.lastIndex) {
-            _uiState.update { it.copy(errorMessage = "No next station available.") }
+            _uiState.update { it.copy(errorMessageRes = R.string.error_no_next_station) }
             return
         }
 
@@ -193,7 +195,7 @@ class MainViewModel(
         mediaController?.prepare()
         mediaController?.play()
 
-        _uiState.update { it.copy(currentStation = station, isPlaying = true, errorMessage = null) }
+        _uiState.update { it.copy(currentStation = station, isPlaying = true, errorMessageRes = null) }
     }
 
     // Set Favourite Radio Stations
@@ -220,7 +222,7 @@ class MainViewModel(
 
     fun clearError() {
         Log.v(TAG, "clearError() called")
-        _uiState.update { it.copy(errorMessage = null) }
+        _uiState.update { it.copy(errorMessageRes = null) }
     }
 
     override fun onCleared() {

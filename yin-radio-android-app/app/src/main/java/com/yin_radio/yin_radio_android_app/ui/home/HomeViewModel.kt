@@ -1,8 +1,10 @@
 package com.yin_radio.yin_radio_android_app.ui.home
 
 import android.util.Log
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yin_radio.yin_radio_android_app.R
 import com.yin_radio.yin_radio_android_app.data.local.db.TagEntity
 import com.yin_radio.yin_radio_android_app.data.repository.StationRepository
 import com.yin_radio.yin_radio_android_app.domain.model.Station
@@ -100,7 +102,7 @@ class HomeViewModel(
         Log.v(TAG, "performSearch() called")
         viewModelScope.launch {
             if (!append) {
-                _uiState.update { it.copy(isLoading = true, errorMessage = null, offset = 0) }
+                _uiState.update { it.copy(isLoading = true, errorMessageRes = null, offset = 0) }
             } else {
                 _uiState.update { it.copy(isLoadingMore = true) }
             }
@@ -121,15 +123,16 @@ class HomeViewModel(
                         isLoading = false,
                         isLoadingMore = false,
                         hasMore = results.size == 30,
-                        errorMessage = null
+                        errorMessageRes = null
                     )
                 }
             } catch (e: Exception) {
+                Log.e(TAG, "performSearch() failed", e)
                 _uiState.update {
                     it.copy(
                         isLoading = false,
                         isLoadingMore = false,
-                        errorMessage = e.message
+                        errorMessageRes = R.string.error_loading_stations
                     )
                 }
             }
@@ -138,7 +141,7 @@ class HomeViewModel(
 
     fun clearError() {
         Log.v(TAG, "clearError() called")
-        _uiState.update { it.copy(errorMessage = null) }
+        _uiState.update { it.copy(errorMessageRes = null) }
     }
 }
 
@@ -152,7 +155,7 @@ data class HomeUiState(
     val isLoadingMore: Boolean = false,
     val hasMore: Boolean = true,
     val offset: Int = 0,
-    val errorMessage: String? = null,
+    @StringRes val errorMessageRes: Int? = null,
     val availableCountries: List<String> = emptyList(),
     val availableLanguages: List<String> = emptyList(),
     val availableTags: List<TagEntity> = emptyList()

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App & System -->
+    <string name="app_name">Yin Radio</string>
+    <string name="playback_notification_text">রেডিও চলছে</string>
+    <string name="notification_channel_name">রেডিও প্লেব্যাক</string>
+    <string name="notification_channel_description">Yin Radio প্লেব্যাকের নিয়ন্ত্রণ</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">হোম</string>
+    <string name="nav_favorites">প্রিয়</string>
+    <string name="nav_settings">সেটিংস</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_welcome">Yin Radio-তে স্বাগতম</string>
+    <string name="onboarding_description">শুরু করতে স্টেশন ক্যাটালগ ডাউনলোড করুন। এর জন্য ইন্টারনেট সংযোগ প্রয়োজন।</string>
+    <string name="onboarding_downloading">স্টেশন ডাউনলোড হচ্ছে…</string>
+    <string name="onboarding_button_download">স্টেশন ডাউনলোড করুন</string>
+
+    <!-- Home -->
+    <string name="home_error_loading">স্টেশন লোড করতে ত্রুটি</string>
+
+    <!-- Favorites -->
+    <string name="favorites_title">প্রিয়</string>
+    <string name="favorites_empty">এখনো কোনো প্রিয় নেই।</string>
+
+    <!-- Expanded Player -->
+    <string name="player_select_station">একটি স্টেশন নির্বাচন করুন</string>
+    <string name="player_back">পেছনে</string>
+    <string name="player_share">শেয়ার করুন</string>
+    <string name="player_previous">পূর্ববর্তী</string>
+    <string name="player_play">চালান</string>
+    <string name="player_pause">বিরতি</string>
+    <string name="player_next">পরবর্তী</string>
+    <string name="player_favorite">প্রিয়</string>
+
+    <!-- Search & Filters -->
+    <string name="search_placeholder">স্টেশন অনুসন্ধান করুন…</string>
+    <string name="search_clear">মুছুন</string>
+    <string name="filter_country">দেশ</string>
+    <string name="filter_language">ভাষা</string>
+    <string name="filter_tags_label">ট্যাগ:</string>
+    <string name="filter_add">+ যোগ করুন</string>
+    <string name="filter_clear">ফিল্টার মুছুন</string>
+    <string name="filter_confirm">নিশ্চিত করুন</string>
+    <string name="filter_select_country">দেশ নির্বাচন করুন</string>
+    <string name="filter_select_language">ভাষা নির্বাচন করুন</string>
+    <string name="filter_select_tags">ট্যাগ নির্বাচন করুন</string>
+    <string name="filter_cancel">বাতিল করুন</string>
+    <string name="filter_done">সম্পন্ন</string>
+    <string name="filter_remove">ফিল্টার সরান</string>
+    <string name="filter_select_placeholder">+ নির্বাচন করুন</string>
+
+    <!-- Station Card -->
+    <string name="station_remove_favorite">প্রিয় থেকে সরান</string>
+    <string name="station_add_favorite">প্রিয়তে যোগ করুন</string>
+
+    <!-- Settings -->
+    <string name="settings_title">সেটিংস</string>
+    <string name="settings_appearance">আবেশন</string>
+    <string name="settings_theme_light">হালকা</string>
+    <string name="settings_theme_dark">গাঢ়</string>
+    <string name="settings_theme_system">সিস্টেম অনুসরণ করুন</string>
+    <string name="settings_playback">প্লেব্যাক</string>
+    <string name="settings_allow_http">HTTP স্ট্রিম অনুমতি দিন</string>
+    <string name="settings_allow_http_desc">অএনক্রিপ্টেড HTTP স্ট্রিম ব্যবহারকারী স্টেশনের প্লেব্যাক সক্রিয় করুন</string>
+    <string name="settings_data">ডেটা</string>
+    <string name="settings_about">সম্পর্কে</string>
+    <string name="settings_about_app_name">Yin Radio</string>
+    <string name="settings_about_data_prefix">তথ্যের উৎস: </string>
+    <string name="settings_about_created_prefix">নির্মাতা: </string>
+    <string name="settings_syncing">স্টেশন সিঙ্ক হচ্ছে…</string>
+    <string name="settings_resync_manifest">রেডিও স্টেশন ম্যানিফেস্ট পুনঃসিঙ্ক করুন</string>
+    <string name="settings_sync_up_to_date">হালনাগাদ</string>
+    <string name="settings_sync_last_updated">সর্বশেষ আপডেট: %1$s</string>
+    <string name="settings_sync_download_latest">সর্বশেষ রেডিও স্টেশন ম্যানিফেস্ট ডাউনলোড করুন</string>
+    <string name="settings_sync_complete">রেডিও স্টেশন ম্যানিফেস্ট সিঙ্ক সম্পন্ন</string>
+
+    <!-- ViewModel Errors -->
+    <string name="error_station_unavailable">স্টেশন অনুপলব্ধ।</string>
+    <string name="error_stream_unsupported">স্ট্রিম ফরম্যাট সমর্থিত নয়।</string>
+    <string name="error_playback_generic">প্লেব্যাক ত্রুটি।</string>
+    <string name="error_http_required">এই স্টেশনটি HTTP প্লেব্যাক প্রয়োজন। এটি সেটিংসে সক্রিয় করুন।</string>
+    <string name="error_no_previous_station">কোনো পূর্ববর্তী স্টেশন উপলব্ধ নেই।</string>
+    <string name="error_no_next_station">কোনো পরবর্তী স্টেশন উপলব্ধ নেই।</string>
+    <string name="error_sync_failed">সিঙ্ক ব্যর্থ</string>
+    <string name="error_loading_stations">স্টেশন লোড করতে একটি ত্রুটি ঘটেছে।</string>
+</resources>
