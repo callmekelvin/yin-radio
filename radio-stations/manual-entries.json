@@ -1,0 +1,36 @@
+[
+    {
+        "stationuuid": "be6b6973-cb00-4d1b-8a13-ee01e3eacb8d",
+        "name": "2AC澳洲华人电台粤语广播 - Cantonese",
+        "url_resolved": "https://s1.voscast.com:10443/stream",
+        "favicon": "https://webertop.oss-cn-hongkong.topkee.top/u_400996516145270784/202211041155668.svg",
+        "tags": ["australia", "cantonese", "full service"],
+        "country": "Australia",
+        "countrycode": "AU",
+        "bitrate": 0,
+        "codec": "",
+        "votes": 0,
+        "language": "cantonese",
+        "languagecodes": "yue",
+        "hls": 0,
+        "geo_lat": null,
+        "geo_long": null
+    },
+    {
+        "stationuuid": "a976141f-3bab-4c2f-a644-6e62062bb534",
+        "name": "2AC澳洲华人电台普通话广播 - Mandarin",
+        "url_resolved": "https://s1.voscast.com:10557/stream",
+        "favicon": "https://webertop.oss-cn-hongkong.topkee.top/u_400996516145270784/202211041155668.svg",
+        "tags": ["australia", "full service", "mandarin"],
+        "country": "Australia",
+        "countrycode": "AU",
+        "bitrate": 0,
+        "codec": "",
+        "votes": 0,
+        "language": "mandarin",
+        "languagecodes": "cmn",
+        "hls": 0,
+        "geo_lat": null,
+        "geo_long": null
+    }
+]

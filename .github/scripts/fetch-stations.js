@@ -88,7 +88,7 @@ function cleanupRadioStationsDir(outputDir) {
 
   const entries = fs.readdirSync(outputDir, { withFileTypes: true });
   for (const entry of entries) {
-    if (entry.name === 'index.html') continue;
+    if (entry.name === 'index.html' || entry.name === 'manual-entries.json') continue;
 
     const fullPath = path.join(outputDir, entry.name);
     if (entry.isDirectory()) {
@@ -99,13 +99,12 @@ function cleanupRadioStationsDir(outputDir) {
   }
 }
 
-async function fetchAllStations(outputBaseDir) {
+async function fetchAllStations() {
   console.log('Fetching all stations from Radio Browser...');
   const startTime = Date.now();
   let offset = 0;
   let allStations = [];
   let pageCount = 0;
-  let totalPages = 0;
 
   while (true) {
     const apiPath = `/json/stations/search?limit=${PAGE_SIZE}&offset=${offset}&order=votes&reverse=true&hidebroken=true&lastcheckok=1`;
@@ -132,16 +131,8 @@ async function fetchAllStations(outputBaseDir) {
     if (page.length === 0) break;
 
     const transformedPage = page.map(transformStation);
-
-    // Write per-page shard
-    const pageDir = path.join(outputBaseDir, String(pageCount));
-    fs.mkdirSync(pageDir, { recursive: true });
-    const pagePath = path.join(pageDir, 'stations.json');
-    fs.writeFileSync(pagePath, JSON.stringify(transformedPage, null, 0));
-
     allStations = allStations.concat(transformedPage);
-    totalPages++;
-    console.log(`  Page ${pageCount}: +${transformedPage.length} stations (total: ${allStations.length})`);
+    console.log(`  API page ${pageCount}: +${transformedPage.length} stations (total: ${allStations.length})`);
 
     if (page.length < PAGE_SIZE) break;
     pageCount++;
@@ -149,9 +140,61 @@ async function fetchAllStations(outputBaseDir) {
   }
 
   const duration = Date.now() - startTime;
-  console.log(`Fetched ${allStations.length} stations in ${duration}ms across ${totalPages} page(s)`);
+  console.log(`Fetched ${allStations.length} stations in ${duration}ms`);
 
-  return { stations: allStations, totalPages };
+  return allStations;
+}
+
+function loadManualEntries(outputDir) {
+  const manualPath = path.join(outputDir, 'manual-entries.json');
+  if (!fs.existsSync(manualPath)) {
+    console.log('No manual-entries.json found, skipping manual entries');
+    return [];
+  }
+
+  try {
+    const raw = fs.readFileSync(manualPath, 'utf8');
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) {
+      console.warn('manual-entries.json is not an array, skipping manual entries');
+      return [];
+    }
+    return parsed;
+  } catch (error) {
+    console.warn(`Failed to load manual-entries.json: ${error.message}`);
+    return [];
+  }
+}
+
+function appendUniqueManualEntries(apiStations, manualEntries) {
+  const existingUuids = new Set(apiStations.map(station => station.stationuuid));
+  const uniqueManualEntries = [];
+
+  for (const entry of manualEntries) {
+    if (existingUuids.has(entry.stationuuid)) {
+      console.log(`Skipping duplicate manual entry: ${entry.stationuuid} (${entry.name})`);
+      continue;
+    }
+    existingUuids.add(entry.stationuuid);
+    uniqueManualEntries.push(entry);
+  }
+
+  return apiStations.concat(uniqueManualEntries);
+}
+
+function writePageShards(outputDir, stations) {
+  const totalPages = Math.ceil(stations.length / PAGE_SIZE) || 0;
+
+  for (let i = 0; i < totalPages; i++) {
+    const page = stations.slice(i * PAGE_SIZE, (i + 1) * PAGE_SIZE);
+    const pageDir = path.join(outputDir, String(i));
+    fs.mkdirSync(pageDir, { recursive: true });
+    const pagePath = path.join(pageDir, 'stations.json');
+    fs.writeFileSync(pagePath, JSON.stringify(page, null, 0));
+    console.log(`  Wrote page ${i}: ${page.length} stations`);
+  }
+
+  return totalPages;
 }
 
 function writeManifest(outputDir, totalStations, totalPages) {
@@ -184,9 +227,14 @@ async function main() {
     const outputDir = path.resolve(__dirname, '..', '..', 'radio-stations');
 
     cleanupRadioStationsDir(outputDir);
-    console.log(`Cleaned up ${outputDir} (preserved index.html)`);
+    console.log(`Cleaned up ${outputDir} (preserved index.html and manual-entries.json)`);
 
-    const { stations, totalPages } = await fetchAllStations(outputDir);
+    const apiStations = await fetchAllStations();
+    const manualEntries = loadManualEntries(outputDir);
+    const stations = appendUniqueManualEntries(apiStations, manualEntries);
+
+    // Write paginated shards from the combined station list
+    const totalPages = writePageShards(outputDir, stations);
 
     // Write consolidated stations.json (backward compatible)
     const stationsPath = path.join(outputDir, 'stations.json');
