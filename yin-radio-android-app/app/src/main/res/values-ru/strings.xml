@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App & System -->
+    <string name="app_name">Yin Radio</string>
+    <string name="playback_notification_text">Воспроизведение радио</string>
+    <string name="notification_channel_name">Воспроизведение радио</string>
+    <string name="notification_channel_description">Элементы управления воспроизведением Yin Radio</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">Главная</string>
+    <string name="nav_favorites">Избранное</string>
+    <string name="nav_settings">Настройки</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_welcome">Добро пожаловать в Yin Radio</string>
+    <string name="onboarding_description">Загрузите каталог станций, чтобы начать. Для этого требуется подключение к интернету.</string>
+    <string name="onboarding_downloading">Загрузка станций…</string>
+    <string name="onboarding_button_download">Загрузить станции</string>
+
+    <!-- Home -->
+    <string name="home_error_loading">Ошибка загрузки станций</string>
+
+    <!-- Favorites -->
+    <string name="favorites_title">Избранное</string>
+    <string name="favorites_empty">Пока нет избранного.</string>
+
+    <!-- Expanded Player -->
+    <string name="player_select_station">Выберите станцию</string>
+    <string name="player_back">Назад</string>
+    <string name="player_share">Поделиться</string>
+    <string name="player_previous">Предыдущая</string>
+    <string name="player_play">Воспроизвести</string>
+    <string name="player_pause">Пауза</string>
+    <string name="player_next">Следующая</string>
+    <string name="player_favorite">Избранное</string>
+
+    <!-- Search & Filters -->
+    <string name="search_placeholder">Поиск станций…</string>
+    <string name="search_clear">Очистить</string>
+    <string name="filter_country">Страна</string>
+    <string name="filter_language">Язык</string>
+    <string name="filter_tags_label">Теги:</string>
+    <string name="filter_add">+ Добавить</string>
+    <string name="filter_clear">Сбросить фильтры</string>
+    <string name="filter_confirm">Подтвердить</string>
+    <string name="filter_select_country">Выберите страну</string>
+    <string name="filter_select_language">Выберите язык</string>
+    <string name="filter_select_tags">Выберите теги</string>
+    <string name="filter_cancel">Отмена</string>
+    <string name="filter_done">Готово</string>
+    <string name="filter_remove">Удалить фильтр</string>
+    <string name="filter_select_placeholder">+ Выбрать</string>
+
+    <!-- Station Card -->
+    <string name="station_remove_favorite">Удалить из избранного</string>
+    <string name="station_add_favorite">Добавить в избранное</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Настройки</string>
+    <string name="settings_appearance">Внешний вид</string>
+    <string name="settings_theme_light">Светлая</string>
+    <string name="settings_theme_dark">Тёмная</string>
+    <string name="settings_theme_system">Как в системе</string>
+    <string name="settings_playback">Воспроизведение</string>
+    <string name="settings_allow_http">Разрешить HTTP-потоки</string>
+    <string name="settings_allow_http_desc">Включить воспроизведение станций, использующих незашифрованные HTTP-потоки</string>
+    <string name="settings_data">Данные</string>
+    <string name="settings_about">О приложении</string>
+    <string name="settings_about_app_name">Yin Radio</string>
+    <string name="settings_about_data_prefix">Источник данных: </string>
+    <string name="settings_about_created_prefix">Создатель: </string>
+    <string name="settings_syncing">Синхронизация станций…</string>
+    <string name="settings_resync_manifest">Повторно синхронизировать манифест станций</string>
+    <string name="settings_sync_up_to_date">Актуально</string>
+    <string name="settings_sync_last_updated">Последнее обновление: %1$s</string>
+    <string name="settings_sync_download_latest">Загрузить последний манифест станций</string>
+    <string name="settings_sync_complete">Синхронизация манифеста завершена</string>
+
+    <!-- ViewModel Errors -->
+    <string name="error_station_unavailable">Станция недоступна.</string>
+    <string name="error_stream_unsupported">Формат потока не поддерживается.</string>
+    <string name="error_playback_generic">Ошибка воспроизведения.</string>
+    <string name="error_http_required">Для этой станции требуется воспроизведение по HTTP. Включите его в настройках.</string>
+    <string name="error_no_previous_station">Предыдущая станция недоступна.</string>
+    <string name="error_no_next_station">Следующая станция недоступна.</string>
+    <string name="error_sync_failed">Ошибка синхронизации</string>
+    <string name="error_loading_stations">Произошла ошибка при загрузке станций.</string>
+</resources>

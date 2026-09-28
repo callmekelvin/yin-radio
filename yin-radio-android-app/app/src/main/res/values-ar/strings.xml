@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App & System -->
+    <string name="app_name">Yin Radio</string>
+    <string name="playback_notification_text">تشغيل الراديو</string>
+    <string name="notification_channel_name">تشغيل الراديو</string>
+    <string name="notification_channel_description">عناصر التحكم في تشغيل Yin Radio</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">الرئيسية</string>
+    <string name="nav_favorites">المفضلة</string>
+    <string name="nav_settings">الإعدادات</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_welcome">مرحبًا بك في Yin Radio</string>
+    <string name="onboarding_description">قم بتنزيل دليل المحطات للبدء. يتطلب ذلك اتصالاً بالإنترنت.</string>
+    <string name="onboarding_downloading">جارٍ تنزيل المحطات…</string>
+    <string name="onboarding_button_download">تنزيل المحطات</string>
+
+    <!-- Home -->
+    <string name="home_error_loading">خطأ في تحميل المحطات</string>
+
+    <!-- Favorites -->
+    <string name="favorites_title">المفضلة</string>
+    <string name="favorites_empty">لا توجد مفضلات حتى الآن.</string>
+
+    <!-- Expanded Player -->
+    <string name="player_select_station">اختر محطة</string>
+    <string name="player_back">رجوع</string>
+    <string name="player_share">مشاركة</string>
+    <string name="player_previous">السابق</string>
+    <string name="player_play">تشغيل</string>
+    <string name="player_pause">إيقاف مؤقت</string>
+    <string name="player_next">التالي</string>
+    <string name="player_favorite">مفضلة</string>
+
+    <!-- Search & Filters -->
+    <string name="search_placeholder">البحث في المحطات…</string>
+    <string name="search_clear">مسح</string>
+    <string name="filter_country">البلد</string>
+    <string name="filter_language">اللغة</string>
+    <string name="filter_tags_label">الوسوم:</string>
+    <string name="filter_add">+ إضافة</string>
+    <string name="filter_clear">مسح الفلاتر</string>
+    <string name="filter_confirm">تأكيد</string>
+    <string name="filter_select_country">اختر البلد</string>
+    <string name="filter_select_language">اختر اللغة</string>
+    <string name="filter_select_tags">اختر الوسوم</string>
+    <string name="filter_cancel">إلغاء</string>
+    <string name="filter_done">تم</string>
+    <string name="filter_remove">إزالة الفلتر</string>
+    <string name="filter_select_placeholder">+ اختر</string>
+
+    <!-- Station Card -->
+    <string name="station_remove_favorite">إزالة من المفضلة</string>
+    <string name="station_add_favorite">إضافة إلى المفضلة</string>
+
+    <!-- Settings -->
+    <string name="settings_title">الإعدادات</string>
+    <string name="settings_appearance">المظهر</string>
+    <string name="settings_theme_light">فاتح</string>
+    <string name="settings_theme_dark">داكن</string>
+    <string name="settings_theme_system">اتباع النظام</string>
+    <string name="settings_playback">التشغيل</string>
+    <string name="settings_allow_http">السماح ببث HTTP</string>
+    <string name="settings_allow_http_desc">تفعيل تشغيل المحطات التي تستخدم بث HTTP غير مشفر</string>
+    <string name="settings_data">البيانات</string>
+    <string name="settings_about">حول</string>
+    <string name="settings_about_app_name">Yin Radio</string>
+    <string name="settings_about_data_prefix">البيانات مأخوذة من </string>
+    <string name="settings_about_created_prefix">تم الإنشاء بواسطة </string>
+    <string name="settings_syncing">جارٍ مزامنة المحطات…</string>
+    <string name="settings_resync_manifest">إعادة مزامنة قائمة محطات الراديو</string>
+    <string name="settings_sync_up_to_date">محدث</string>
+    <string name="settings_sync_last_updated">آخر تحديث: %1$s</string>
+    <string name="settings_sync_download_latest">تنزيل أحدث قائمة محطات الراديو</string>
+    <string name="settings_sync_complete">اكتملت مزامنة قائمة محطات الراديو</string>
+
+    <!-- ViewModel Errors -->
+    <string name="error_station_unavailable">المحطة غير متاحة.</string>
+    <string name="error_stream_unsupported">تنسيق البث غير مدعوم.</string>
+    <string name="error_playback_generic">خطأ في التشغيل.</string>
+    <string name="error_http_required">تتطلب هذه المحطة تشغيل HTTP. قم بتمكينه في الإعدادات.</string>
+    <string name="error_no_previous_station">لا توجد محطة سابقة متاحة.</string>
+    <string name="error_no_next_station">لا توجد محطة تالية متاحة.</string>
+    <string name="error_sync_failed">فشلت المزامنة</string>
+    <string name="error_loading_stations">حدث خطأ أثناء تحميل المحطات.</string>
+</resources>

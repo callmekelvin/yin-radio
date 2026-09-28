@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App & System -->
+    <string name="app_name">Yin Radio</string>
+    <string name="playback_notification_text">正在播放电台</string>
+    <string name="notification_channel_name">电台播放</string>
+    <string name="notification_channel_description">Yin Radio 播放控制</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">首页</string>
+    <string name="nav_favorites">收藏</string>
+    <string name="nav_settings">设置</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_welcome">欢迎使用 Yin Radio</string>
+    <string name="onboarding_description">下载电台目录以开始使用。这需要互联网连接。</string>
+    <string name="onboarding_downloading">正在下载电台…</string>
+    <string name="onboarding_button_download">下载电台</string>
+
+    <!-- Home -->
+    <string name="home_error_loading">加载电台时出错</string>
+
+    <!-- Favorites -->
+    <string name="favorites_title">收藏</string>
+    <string name="favorites_empty">暂无收藏。</string>
+
+    <!-- Expanded Player -->
+    <string name="player_select_station">选择一个电台</string>
+    <string name="player_back">返回</string>
+    <string name="player_share">分享</string>
+    <string name="player_previous">上一首</string>
+    <string name="player_play">播放</string>
+    <string name="player_pause">暂停</string>
+    <string name="player_next">下一首</string>
+    <string name="player_favorite">收藏</string>
+
+    <!-- Search & Filters -->
+    <string name="search_placeholder">搜索电台…</string>
+    <string name="search_clear">清除</string>
+    <string name="filter_country">国家</string>
+    <string name="filter_language">语言</string>
+    <string name="filter_tags_label">标签：</string>
+    <string name="filter_add">+ 添加</string>
+    <string name="filter_clear">清除筛选</string>
+    <string name="filter_confirm">确认</string>
+    <string name="filter_select_country">选择国家</string>
+    <string name="filter_select_language">选择语言</string>
+    <string name="filter_select_tags">选择标签</string>
+    <string name="filter_cancel">取消</string>
+    <string name="filter_done">完成</string>
+    <string name="filter_remove">移除筛选</string>
+    <string name="filter_select_placeholder">+ 选择</string>
+
+    <!-- Station Card -->
+    <string name="station_remove_favorite">取消收藏</string>
+    <string name="station_add_favorite">添加收藏</string>
+
+    <!-- Settings -->
+    <string name="settings_title">设置</string>
+    <string name="settings_appearance">外观</string>
+    <string name="settings_theme_light">浅色</string>
+    <string name="settings_theme_dark">深色</string>
+    <string name="settings_theme_system">跟随系统</string>
+    <string name="settings_playback">播放</string>
+    <string name="settings_allow_http">允许 HTTP 流</string>
+    <string name="settings_allow_http_desc">启用使用未加密 HTTP 流的电台播放</string>
+    <string name="settings_data">数据</string>
+    <string name="settings_about">关于</string>
+    <string name="settings_about_app_name">Yin Radio</string>
+    <string name="settings_about_data_prefix">数据来源：</string>
+    <string name="settings_about_created_prefix">开发者：</string>
+    <string name="settings_syncing">正在同步电台…</string>
+    <string name="settings_resync_manifest">重新同步电台清单</string>
+    <string name="settings_sync_up_to_date">已是最新</string>
+    <string name="settings_sync_last_updated">最后更新：%1$s</string>
+    <string name="settings_sync_download_latest">下载最新电台清单</string>
+    <string name="settings_sync_complete">电台清单同步完成</string>
+
+    <!-- ViewModel Errors -->
+    <string name="error_station_unavailable">电台不可用。</string>
+    <string name="error_stream_unsupported">不支持的流媒体格式。</string>
+    <string name="error_playback_generic">播放错误。</string>
+    <string name="error_http_required">此电台需要 HTTP 播放。请在设置中启用。</string>
+    <string name="error_no_previous_station">没有上一个电台。</string>
+    <string name="error_no_next_station">没有下一个电台。</string>
+    <string name="error_sync_failed">同步失败</string>
+    <string name="error_loading_stations">加载电台时发生错误。</string>
+</resources>
