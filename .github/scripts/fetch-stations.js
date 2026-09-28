@@ -232,6 +232,7 @@ async function main() {
     const apiStations = await fetchAllStations();
     const manualEntries = loadManualEntries(outputDir);
     const stations = appendUniqueManualEntries(apiStations, manualEntries);
+    console.log(`Added ${stations.length - apiStations.length} manual entries to station lists`);
 
     // Write paginated shards from the combined station list
     const totalPages = writePageShards(outputDir, stations);
