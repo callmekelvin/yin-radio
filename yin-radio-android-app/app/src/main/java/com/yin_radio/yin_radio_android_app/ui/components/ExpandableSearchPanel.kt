@@ -33,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.yin_radio.yin_radio_android_app.R
@@ -98,7 +99,7 @@ fun ExpandableSearchPanel(
                     if (isExpanded) draftQuery = it
                 },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Search stations...") },
+                placeholder = { Text(stringResource(R.string.search_placeholder)) },
                 leadingIcon = {
                     Icon(painterResource(R.drawable.ic_search), contentDescription = null)
                 },
@@ -113,7 +114,7 @@ fun ExpandableSearchPanel(
                                 onSubmitSearch()
                             }
                         }) {
-                            Icon(painterResource(R.drawable.ic_clear), contentDescription = "Clear")
+                            Icon(painterResource(R.drawable.ic_clear), contentDescription = stringResource(R.string.search_clear))
                         }
                     }
                 },
@@ -158,9 +159,9 @@ fun ExpandableSearchPanel(
 
             // Country Row
             FilterRow(
-                label = "Country",
+                label = stringResource(R.string.filter_country),
                 value = draftCountry,
-                placeholder = "+ Select",
+                placeholder = stringResource(R.string.filter_select_placeholder),
                 onClick = { showCountryDialog = true }
             )
 
@@ -168,9 +169,9 @@ fun ExpandableSearchPanel(
 
             // Language Row
             FilterRow(
-                label = "Language",
+                label = stringResource(R.string.filter_language),
                 value = draftLanguage,
-                placeholder = "+ Select",
+                placeholder = stringResource(R.string.filter_select_placeholder),
                 onClick = { showLanguageDialog = true }
             )
 
@@ -182,7 +183,7 @@ fun ExpandableSearchPanel(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Tags:",
+                    text = stringResource(R.string.filter_tags_label),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.width(72.dp)
                 )
@@ -200,7 +201,7 @@ fun ExpandableSearchPanel(
                     }
                     AssistChip(
                         onClick = { showTagDialog = true },
-                        label = { Text("+ Add") }
+                        label = { Text(stringResource(R.string.filter_add)) }
                     )
                 }
             }
@@ -212,10 +213,10 @@ fun ExpandableSearchPanel(
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
             ) {
                 TextButton(onClick = { clear() }) {
-                    Text("Clear Filters")
+                    Text(stringResource(R.string.filter_clear))
                 }
                 TextButton(onClick = { confirm() }) {
-                    Text("Confirm")
+                    Text(stringResource(R.string.filter_confirm))
                 }
             }
         }
@@ -223,7 +224,7 @@ fun ExpandableSearchPanel(
 
     if (showCountryDialog) {
         FilterSelectionDialog(
-            title = "Select Country",
+            title = stringResource(R.string.filter_select_country),
             items = availableCountries,
             selectedItem = draftCountry,
             onItemSelected = {
@@ -236,7 +237,7 @@ fun ExpandableSearchPanel(
 
     if (showLanguageDialog) {
         FilterSelectionDialog(
-            title = "Select Language",
+            title = stringResource(R.string.filter_select_language),
             items = availableLanguages,
             selectedItem = draftLanguage,
             onItemSelected = {
@@ -249,7 +250,7 @@ fun ExpandableSearchPanel(
 
     if (showTagDialog) {
         TagSelectionDialog(
-            title = "Select Tags",
+            title = stringResource(R.string.filter_select_tags),
             items = availableTags.map { it.tagName },
             selectedItems = draftTags,
             onItemToggled = { tag ->
@@ -276,7 +277,7 @@ private fun FilterRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "$label:",
+            text = label,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.width(72.dp)
         )
@@ -320,7 +321,7 @@ private fun FilterSelectionDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.filter_cancel))
             }
         }
     )
@@ -359,7 +360,7 @@ private fun TagSelectionDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Done")
+                Text(stringResource(R.string.filter_done))
             }
         }
     )

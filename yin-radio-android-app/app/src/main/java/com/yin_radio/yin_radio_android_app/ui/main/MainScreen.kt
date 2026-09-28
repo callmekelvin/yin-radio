@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -13,7 +14,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import android.util.Log
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.Alignment
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
@@ -41,10 +42,10 @@ import com.yin_radio.yin_radio_android_app.ui.settings.SettingsScreen
 import org.koin.compose.viewmodel.koinViewModel
 
 // Singleton for each Screen Configuration
-sealed class Screen(val route: String, val title: String, @DrawableRes val iconRes: Int) {
-    data object Home : Screen("home", "Home", R.drawable.ic_home)
-    data object Favorites : Screen("favorites", "Favorites", R.drawable.ic_favorite)
-    data object Settings : Screen("settings", "Settings", R.drawable.ic_settings)
+sealed class Screen(val route: String, @StringRes val titleRes: Int, @DrawableRes val iconRes: Int) {
+    data object Home : Screen("home", R.string.nav_home, R.drawable.ic_home)
+    data object Favorites : Screen("favorites", R.string.nav_favorites, R.drawable.ic_favorite)
+    data object Settings : Screen("settings", R.string.nav_settings, R.drawable.ic_settings)
 }
 
 @Composable
@@ -60,8 +61,8 @@ fun MainScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     // Auto-dismiss error banner after 3 seconds
-    LaunchedEffect(uiState.errorMessage) {
-        uiState.errorMessage?.let {
+    LaunchedEffect(uiState.errorMessageRes) {
+        uiState.errorMessageRes?.let {
             delay(3000L)
             viewModel.clearError()
         }
@@ -84,8 +85,8 @@ fun MainScreen(
                         val screens = listOf(Screen.Home, Screen.Favorites, Screen.Settings)
                         screens.forEach { screen ->
                             NavigationBarItem(
-                                icon = { Icon(painterResource(screen.iconRes), contentDescription = screen.title) },
-                                label = { Text(screen.title) },
+                                icon = { Icon(painterResource(screen.iconRes), contentDescription = stringResource(screen.titleRes)) },
+                                label = { Text(stringResource(screen.titleRes)) },
                                 selected = uiState.selectedScreen == screen.route,
                                 onClick = { viewModel.onScreenSelected(screen.route) }
                             )
@@ -127,7 +128,7 @@ fun MainScreen(
 
         // Slides up from bottom when a playback error occurs, slides down when dismissed after 3s
         AnimatedVisibility(
-            visible = uiState.errorMessage != null,
+            visible = uiState.errorMessageRes != null,
             enter = slideInVertically { it },
             exit = slideOutVertically { it },
             modifier = Modifier
@@ -138,11 +139,13 @@ fun MainScreen(
                 colors = CardDefaults.cardColors(containerColor = Color(0xFFD32F2F)),
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Text(
-                    text = uiState.errorMessage ?: "",
-                    color = Color.White,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
-                )
+                uiState.errorMessageRes?.let { res ->
+                    Text(
+                        text = stringResource(res),
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                    )
+                }
             }
         }
     }

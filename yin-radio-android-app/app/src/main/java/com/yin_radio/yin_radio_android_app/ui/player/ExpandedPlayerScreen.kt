@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -63,10 +64,10 @@ fun ExpandedPlayerScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(onClick = onDismiss) {
-                    Icon(painterResource(R.drawable.ic_arrow_back), contentDescription = "Back")
+                    Icon(painterResource(R.drawable.ic_arrow_back), contentDescription = stringResource(R.string.player_back))
                 }
                 IconButton(onClick = { /* share */ }) {
-                    Icon(painterResource(R.drawable.ic_share), contentDescription = "Share")
+                    Icon(painterResource(R.drawable.ic_share), contentDescription = stringResource(R.string.player_share))
                 }
             }
 
@@ -86,7 +87,7 @@ fun ExpandedPlayerScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             Text(
-                text = station?.name ?: "Select a station",
+                text = station?.name ?: stringResource(R.string.player_select_station),
                 style = MaterialTheme.typography.displayMedium,
                 textAlign = TextAlign.Center
             )
@@ -108,7 +109,7 @@ fun ExpandedPlayerScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onPrevious) {
-                    Icon(painterResource(R.drawable.ic_skip_previous), contentDescription = "Previous", modifier = Modifier.size(40.dp))
+                    Icon(painterResource(R.drawable.ic_skip_previous), contentDescription = stringResource(R.string.player_previous), modifier = Modifier.size(40.dp))
                 }
 
                 IconButton(
@@ -117,14 +118,14 @@ fun ExpandedPlayerScreen(
                 ) {
                     Icon(
                         painter = if (isPlaying) painterResource(R.drawable.ic_pause) else painterResource(R.drawable.ic_play),
-                        contentDescription = if (isPlaying) "Pause" else "Play",
+                        contentDescription = stringResource(if (isPlaying) R.string.player_pause else R.string.player_play),
                         modifier = Modifier.size(64.dp),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
 
                 IconButton(onClick = onNext) {
-                    Icon(painterResource(R.drawable.ic_skip_next), contentDescription = "Next", modifier = Modifier.size(40.dp))
+                    Icon(painterResource(R.drawable.ic_skip_next), contentDescription = stringResource(R.string.player_next), modifier = Modifier.size(40.dp))
                 }
             }
 
@@ -133,7 +134,7 @@ fun ExpandedPlayerScreen(
             IconButton(onClick = onFavoriteClick) {
                 Icon(
                     painter = if (station?.isFavorite == true) painterResource(R.drawable.ic_favorite) else painterResource(R.drawable.ic_favorite_border),
-                    contentDescription = "Favorite",
+                    contentDescription = stringResource(R.string.player_favorite),
                     tint = if (station?.isFavorite == true) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }

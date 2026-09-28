@@ -22,7 +22,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.yin_radio.yin_radio_android_app.R
 import com.yin_radio.yin_radio_android_app.domain.model.Station
 import com.yin_radio.yin_radio_android_app.ui.components.ExpandableSearchPanel
 import com.yin_radio.yin_radio_android_app.ui.components.StationCard
@@ -92,9 +94,9 @@ fun HomeScreen(
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
-        } else if (uiState.errorMessage != null && uiState.stations.isEmpty()) {
+        } else if (uiState.errorMessageRes != null && uiState.stations.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = uiState.errorMessage ?: "Error loading stations")
+                Text(text = stringResource(uiState.errorMessageRes!!))
             }
         } else {
             LazyColumn(

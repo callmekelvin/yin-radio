@@ -1,8 +1,10 @@
 package com.yin_radio.yin_radio_android_app.ui.sync
 
 import android.util.Log
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yin_radio.yin_radio_android_app.R
 import com.yin_radio.yin_radio_android_app.data.repository.StationRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +15,7 @@ import kotlinx.coroutines.launch
 data class StationSyncUiState(
     val isSyncing: Boolean = false,
     val isComplete: Boolean = false,
-    val errorMessage: String? = null,
+    @StringRes val errorMessageRes: Int? = null,
     val lastSyncTimestamp: Long? = null
 )
 
@@ -42,19 +44,19 @@ class StationSyncViewModel(
         Log.v(TAG, "startSync() called")
         viewModelScope.launch {
             _uiState.update {
-                it.copy(isSyncing = true, isComplete = false, errorMessage = null)
+                it.copy(isSyncing = true, isComplete = false, errorMessageRes = null)
             }
 
             val result = stationRepository.syncStations()
 
             if (result.isSuccess) {
                 Log.v(TAG, "syncStations() succeeded")
-                _uiState.update { it.copy(isSyncing = false, isComplete = true) }
+                _uiState.update { it.copy(isSyncing = false, isComplete = true, errorMessageRes = null) }
                 loadLastSyncMetadata()
             } else {
                 val error = result.exceptionOrNull()?.message ?: "Sync failed"
                 Log.e(TAG, "syncStations() failed: $error")
-                _uiState.update { it.copy(isSyncing = false, errorMessage = error) }
+                _uiState.update { it.copy(isSyncing = false, errorMessageRes = R.string.error_sync_failed) }
             }
         }
     }
@@ -66,7 +68,7 @@ class StationSyncViewModel(
             return
         }
         Log.v(TAG, "reset() called")
-        _uiState.value = StationSyncUiState(lastSyncTimestamp = current.lastSyncTimestamp)
+        _uiState.value = StationSyncUiState(lastSyncTimestamp = current.lastSyncTimestamp, errorMessageRes = null)
     }
 
     private fun loadLastSyncMetadata() {

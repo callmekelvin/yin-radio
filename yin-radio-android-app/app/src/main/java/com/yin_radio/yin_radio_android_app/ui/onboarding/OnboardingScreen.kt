@@ -18,8 +18,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.yin_radio.yin_radio_android_app.R
 import com.yin_radio.yin_radio_android_app.ui.sync.StationSyncViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -53,7 +55,7 @@ fun OnboardingScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Welcome to Yin Radio",
+            text = stringResource(R.string.onboarding_welcome),
             style = MaterialTheme.typography.displayMedium,
             textAlign = TextAlign.Center
         )
@@ -61,7 +63,7 @@ fun OnboardingScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Download the station catalog to get started. This requires an internet connection.",
+            text = stringResource(R.string.onboarding_description),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -72,18 +74,18 @@ fun OnboardingScreen(
         if (uiState.isSyncing) {
             CircularProgressIndicator()
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Downloading stations...", style = MaterialTheme.typography.bodyLarge)
+            Text(stringResource(R.string.onboarding_downloading), style = MaterialTheme.typography.bodyLarge)
         } else {
             // Provide Button to Start Station Sync/ Retrieval
             Button(onClick = { viewModel.startSync() }) {
-                Text("Download Stations")
+                Text(stringResource(R.string.onboarding_button_download))
             }
         }
 
-        if (uiState.errorMessage != null) {
+        if (uiState.errorMessageRes != null) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = uiState.errorMessage ?: "",
+                text = stringResource(uiState.errorMessageRes!!),
                 color = MaterialTheme.colorScheme.error,
                 textAlign = TextAlign.Center
             )
