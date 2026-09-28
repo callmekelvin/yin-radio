@@ -750,6 +750,9 @@ Room is built around three core components that work together:
 - **Data Access Object (DAO)**: Think of this as your **query interface**. It is a Kotlin interface annotated with `@Dao` where you define SQL operations (`@Query`, `@Insert`, `@Update`, `@Delete`). Room generates the implementation at compile time.
 - **Database**: An abstract class extending `RoomDatabase` that links all entities and DAOs into a single database instance.
 
+Database Inspector: https://developer.android.com/studio/inspect/database
+- View -> Tool Windows -> App Inspection -> Data Inspector Tab
+
 #### Gradle Setup
 
 Add the Room dependencies to your Version Catalog (`gradle/libs.versions.toml`):
